@@ -1,0 +1,317 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "39f48a75-f68f-4097-a606-e64ccd1b1c62")
+	(paper "A4")
+	(lib_symbols)
+	(wire
+		(pts
+			(xy 143.51 96.52) (xy 143.51 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2f9269bf-8ca6-4ac8-a0bc-73762cbe966f")
+	)
+	(wire
+		(pts
+			(xy 130.81 99.06) (xy 146.05 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "38d7f77f-d54f-47ca-a3ee-fb80a3aa793c")
+	)
+	(wire
+		(pts
+			(xy 130.81 96.52) (xy 143.51 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d6a396da-7cac-4c6e-aece-75a13401ea68")
+	)
+	(wire
+		(pts
+			(xy 143.51 73.66) (xy 173.99 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f86aaa18-efb5-4149-b23c-aafb98d167b1")
+	)
+	(sheet
+		(at 173.99 71.12)
+		(size 16.51 16.51)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "0136050f-8019-48d9-b040-8e4fea415216")
+		(property "Sheetname" "Flashing"
+			(at 173.99 70.4084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "flashing.kicad_sch"
+			(at 173.99 88.2146 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "V_USB" input
+			(at 173.99 73.66 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "2a141b4e-4a69-4c17-b74e-a25553908ccb")
+		)
+		(pin "EN" input
+			(at 173.99 83.82 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "312af0c6-5258-486d-9e1a-6628e602f653")
+		)
+		(pin "RX0" input
+			(at 190.5 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "fa796934-1be3-4f4a-b14d-a49e9b5be95b")
+		)
+		(pin "TX0" input
+			(at 190.5 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "0c0efe1d-5218-494f-85f6-f732d51022a3")
+		)
+		(pin "IO0" input
+			(at 190.5 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "cd774244-de8d-4736-9efd-be328f43f7ff")
+		)
+		(pin "D-" input
+			(at 173.99 81.28 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "55d27bb9-c7b6-420d-bb21-bf5b7d13348a")
+		)
+		(pin "D+" input
+			(at 173.99 78.74 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "bbe96957-9ef3-41ed-8a47-088ba01a6b94")
+		)
+		(instances
+			(project "Interface Board Test"
+				(path "/39f48a75-f68f-4097-a606-e64ccd1b1c62"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 146.05 90.17)
+		(size 12.7 12.7)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "927b04fb-fc58-4861-8d9c-164b850812c5")
+		(property "Sheetname" "CAN Bus"
+			(at 146.05 89.4584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "can.kicad_sch"
+			(at 146.05 103.4546 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "CAN_RX" input
+			(at 158.75 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "51c57141-de0f-4106-a64f-e51cc2689dfb")
+		)
+		(pin "CAN_TX" input
+			(at 158.75 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "4f7f618a-2d71-45a8-a949-361aa8e37c7c")
+		)
+		(pin "V_BUS" input
+			(at 146.05 99.06 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "1ade6875-0a3b-468f-8a55-3c8656711436")
+		)
+		(instances
+			(project "Interface Board Test"
+				(path "/39f48a75-f68f-4097-a606-e64ccd1b1c62"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 113.03 93.98)
+		(size 17.78 11.43)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "c8e5cc04-fb7f-4fd4-a90c-7c3d9bf3ea03")
+		(property "Sheetname" "Power"
+			(at 113.03 93.2684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 113.03 105.9946 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "SDA" input
+			(at 113.03 102.87 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "33badf55-8403-4cfe-9c46-ab5a24fc9fc8")
+		)
+		(pin "INA_Alert" input
+			(at 130.81 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "bf6fcccc-8fc1-46bf-aa6a-29c3d439ee10")
+		)
+		(pin "V_USB" input
+			(at 130.81 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "94cfbe25-a22d-472f-9473-75b869a5bd1c")
+		)
+		(pin "SCL" input
+			(at 113.03 100.33 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "2e8f6142-0257-4e9e-b6f7-d1c1bc79eba5")
+		)
+		(pin "V_BUS" input
+			(at 130.81 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "55d86286-fd0b-4123-9ad8-1d1375b81b79")
+		)
+		(instances
+			(project "Interface Board Test"
+				(path "/39f48a75-f68f-4097-a606-e64ccd1b1c62"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
