@@ -42,3 +42,10 @@ __pycache__/
 .venv
 venv/
 
+# Temporary files
+~*
+
+# Mac Folder Files
+.DS_Store/
+
+# PCB Backups

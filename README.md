@@ -3,7 +3,13 @@ Library for all code related to development of my home server and space projects
 
 The main goal of this project is not simply to learn, but to focus on following through and finishing each sprint. Additionally, with working prototypes and code, I plan to use my designs to help aspiring engineers who want to develop these skills as well (open-source, potentially?).
 
-Each sprint will act as a sort of version that had a fully working system. When I add changes that completely break a system, then I'll re-rev the design for a new version.
+Each stage will act as a sort of version that had a fully working system. When I add changes that completely break a system, then I'll re-rev the design for a new version.
+
+## Stage/Version 0 (Test Boards to get my footing)
+* Rocket Project Test Rocket Backup Board (in case Avionics wants to fly another)
+* ESP32 WROOM breakout with USB-UART communication, power circuit (3V3, 5V LDOs, Battery), and CAN Bus
+* Breakout with sensors over I2C
+* Breakout with sensors over SPI
 
 ## Stage/Version 1
 The goal of this design is to create an assortment of avionics boards useful for ground testing of amateur rocketry or satellites using the CAN bus and various ADCs for data collection.
@@ -55,6 +61,9 @@ The goal of this design is to create an assortment of avionics boards useful for
 * GSE functionality (Python)
     * Real time DAQ (FizzVizz)
     * MySQL Integration for data storage
+* Other software
+    * Scheduler 
+    * State Machine
 
 ## Other future ideas
 * IOT Home Automation 
