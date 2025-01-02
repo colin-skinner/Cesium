@@ -49,3 +49,8 @@ venv/
 .DS_Store/
 
 # PCB Backups
+**/.DS_Store
+**/._.DS_Store
+**/.vscode
+**/settings.json
+MicrocontrollerCode/.vscode/settings.json
