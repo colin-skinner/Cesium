@@ -14,7 +14,7 @@
 
 # Encoding Process
 * Add
-    * Command code (10 bits)
+    * Command code (10 bitfs)
     * Data length (11 bits)
     * Data (0-2048 bytes)
     * Millistamp (27 bits)
@@ -40,7 +40,7 @@
     - NACK (response to RACK)
     - Reset
     - Reset statistics
-    - 10Hz cycle count
+    - MCU stats (10Hz cycle count)
     - System update (with file on filesystem?)
 - Power
     - Current/Voltage/Power from Battery (V, A, W, LSB)
@@ -62,13 +62,11 @@
     - Connect with SSID and Password
     - ARP output
 - File system
-    - List files
+    - List directory
     - Write to file
     - Read from file (option to peek)
         - Each packet will have a counter byte
     - Delete file
-    - Create directory 
-    - Delete directory
     - Statistics (bytes used, bytes available, % usage)
 - Scheduler (Writes .schdl files to filesystem)
 - GPS
