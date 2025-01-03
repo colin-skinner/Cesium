@@ -33,6 +33,10 @@ if __name__ == "__main__":
     packet.configure(SystemStatusCMD.SYSTEM_UPDATE, bytearray("UPDATING......", "ascii"))
     packet_list.append(packet)
 
+    packet = SystemStatusPacket()
+    packet.configure(SystemStatusCMD.REQUEST_ACK, bytearray("Requesting ACK", "ascii"))
+    packet_list.append(packet)
+
 
     while True:
         print("Emitting packet...",end="")
@@ -41,10 +45,17 @@ if __name__ == "__main__":
             packet.packetize()
             comm.emit_packet(packet)
 
+        # packet_list[0].packetize()
+        # comm.emit_packet(packet_list[0])
+
         print("success.")
 
         sleep(.1)
 
-        # comm.readline()
+        while (comm.port.in_waiting > 0):
+            received = comm.readline()
+            # print(list(received.hex()))
+            received_packet = Packet.depacketize(received)
+            print(received_packet)
 
-        # sleep(0.5)
+        sleep(.1)

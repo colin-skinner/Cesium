@@ -41,6 +41,8 @@ private:
     size_t data_length;
     uint16_t crc;
 
+    
+
     std::vector<uint8_t> header_bytes;
     std::vector<uint8_t> packet_bytes;
 

@@ -15,9 +15,9 @@ class SerialComms:
 
         return ports
 
-    def connect(self, port_name: str, baud_rate = 115200):
+    def connect(self, port_name: str, baud_rate = 115200, timeout = 0.3):
         self.port = serial.Serial(port=port_name,
-                    baudrate=baud_rate)  # open serial port
+                    baudrate=baud_rate, timeout=timeout)  # open serial port
 
     def emit_packet(self, packet: Packet) -> bool:
 
@@ -34,14 +34,14 @@ class SerialComms:
         if self.port.is_open == False:
             self.port.open()
 
-        serial_bytes = self.port.readline()
+        if self.port.in_waiting == 0:
+            return False
 
-        # Print the contents of the serial data
-        print(f"Packet from ESP32: {serial_bytes}")
+        serial_bytes = bytearray(self.port.readline())
 
-        packet = Packet.depacketize(serial_bytes[18:-2])
-
-        print(repr(packet))
+        return serial_bytes[:-2]
+        
+    
 
     
 

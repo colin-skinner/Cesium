@@ -36,6 +36,8 @@ class Packet:
     MAX_DATA_LENGTH = 2**DATA_LENGTH_BITS - 1
     MAX_MILLISTAMP_LENGTH = 2**MILLISTAMP_BITS - 1
 
+    dt_midnight: datetime
+
     
     def __init__(self):
         
@@ -89,7 +91,7 @@ class Packet:
         return self.data_length
     
     def stamp(self) -> None:
-        self.millistamp, self.dt_midnight = get_day_millis()
+        self.millistamp, Packet.dt_midnight = get_day_millis()
         check_within_bits(self.millistamp, Packet.MILLISTAMP_BITS, "millistamp")
 
     def encode_header(self, stamp = True) -> bytearray:
@@ -164,6 +166,7 @@ class Packet:
 
     @staticmethod 
     def depacketize(data_bytes: bytearray):
+
 
         # Extracting CRC
         crc_bytes = data_bytes[-2:]
