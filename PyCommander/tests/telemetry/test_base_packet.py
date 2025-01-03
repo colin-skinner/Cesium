@@ -143,6 +143,10 @@ def test_must_stamp(packet: Packet):
 #        Decode Header       #
 ##############################
 
+def test_invalid_header_size():
+    with pytest.raises(PacketError) as e_info:
+        Packet.decode_header(bytearray([1,2,3,4]))
+
 def test_decode_set_stamp(packet: Packet):
     packet.configure(12, 8, bytearray([1,2,3,4]))
 
@@ -173,6 +177,7 @@ def test_header_random_stamp(packet: Packet):
 ##############################
 
 def test_crc(packet: Packet):
+    # Verified using https://crccalc.com/
     rslt = Packet.calc_crc(bytearray([1,2,3,4,5,6]))
     assert rslt == 0xD90C
 
@@ -192,7 +197,7 @@ def test_must_encode_header(packet: Packet):
 
 def test_with_crc(packet: Packet):
 
-    expected_header =bytearray([0x02, 0x46, 0x8A, 0xC0, 0x88, 0x04])
+    expected_header = bytearray([0x02, 0x46, 0x8A, 0xC0, 0x88, 0x04])
     DATA = bytearray([1,2,3,4])
     expected_crc = 0x9C54
     expected_crc_bytes = bytearray([ (expected_crc >> 8) & 0xFF, expected_crc & 0xFF])

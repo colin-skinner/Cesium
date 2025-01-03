@@ -123,7 +123,10 @@ class Packet:
     
     @staticmethod
     def decode_header(header_bytes: bytearray) -> tuple[int, int, int, int]:
-
+        
+        if len(header_bytes) != 6:
+            raise(PacketError("Header must be 6 bytes"))
+        
         millistamp = ( (int(header_bytes[0]) << 19)
                      + (int(header_bytes[1]) << 11)
                      + (int(header_bytes[2]) << 3)
