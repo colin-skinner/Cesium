@@ -15,17 +15,36 @@ if __name__ == "__main__":
     port_name = f"/dev/{ports[port_num].name}"
     comm.connect(port_name)
 
+    packet_list: list[Packet] = list()
+
     packet = SystemStatusPacket()
-    
-    data = bytearray("THIS IS A PAYLOAD", "ascii")
-    packet.configure(SystemStatusCMD.ACK, data)
-    packet.packetize()
+    packet.configure(SystemStatusCMD.ACK, bytearray("THIS IS A PAYLOAD", "ascii"))
+    packet_list.append(packet)
+
+    packet = PowerPacket()
+    packet.configure(PowerCMD.BATTERY_STATS, bytearray("THIS IS A PAYLOAD ABOUT BATTERIES", "ascii"))
+    packet_list.append(packet)
+
+    packet = ActuatorPacket()
+    packet.configure(ActuatorCMD.STATUS, bytearray("THIS IS A PAYLOAD ABOUT ACTUATORS", "ascii"))
+    packet_list.append(packet)
+
+    packet = SystemStatusPacket()
+    packet.configure(SystemStatusCMD.SYSTEM_UPDATE, bytearray("UPDATING......", "ascii"))
+    packet_list.append(packet)
+
 
     while True:
         print("Emitting packet...",end="")
-        comm.emit_packet(packet)
+
+        for packet in packet_list:
+            packet.packetize()
+            comm.emit_packet(packet)
+
         print("success.")
 
-        comm.readline()
+        sleep(.1)
 
-        sleep(1)
+        # comm.readline()
+
+        # sleep(0.5)

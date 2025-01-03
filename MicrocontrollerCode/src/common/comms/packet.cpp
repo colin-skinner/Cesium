@@ -166,12 +166,8 @@ packet_codes_t BasePacket::depacketize(std::vector<uint8_t> received_bytes, Base
     uint16_t crc_MSB = received_bytes.back(); 
     received_bytes.pop_back();
 
-    DEBUGLN(crc_LSB, HEX);
-    DEBUGLN(crc_MSB, HEX);
-
     uint16_t received_crc = ((crc_MSB << 8) & 0xFF00) + (crc_LSB & 0x00FF);
 
-    DEBUGLN(received_crc, HEX);
     uint16_t decoded_crc = crc16xmodem(received_bytes);
 
     if (received_crc != decoded_crc) {

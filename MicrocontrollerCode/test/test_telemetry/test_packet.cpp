@@ -27,7 +27,7 @@ void test_constructor() {
 ////////////////////////////////////////////////////////////
 // Topic, command edge cases
 
-void test_base() {
+void test_configuration_base() {
     BasePacket packet;
     uint8_t topic = 1;
     uint8_t command = 1;
@@ -130,7 +130,7 @@ void test_data_length_edge_cases() {
 //                      Millistamp                        //
 ////////////////////////////////////////////////////////////
 
-void test_max_millistamp() {
+void test_stamp_max_millistamp() {
     BasePacket packet;
     uint8_t topic = 1;
     uint8_t command = 1;
@@ -145,7 +145,7 @@ void test_max_millistamp() {
     TEST_ASSERT_GREATER_OR_EQUAL_UINT32(0, packet.get_millistamp());
 }
 
-void test_sketch_millistamp() {
+void test_stamp_sketch_millistamp() {
     BasePacket packet;
     uint8_t topic = 1;
     uint8_t command = 1;
@@ -225,7 +225,7 @@ void test_encode_header_random_stamp() {
 //                     Decode Header                      //
 ////////////////////////////////////////////////////////////
 
-void test_header_invalid_length() {
+void test_decode_header_invalid_length() {
     vector<uint8_t> data{1,2,3,4};
 
     uint32_t millistamp;
@@ -234,7 +234,8 @@ void test_header_invalid_length() {
     TEST_ASSERT_EQUAL(BAD_HEADER_LENGTH, BasePacket::decode_header(data, millistamp, topic, command, data_length));
 
 }
-void test_decode_set_stamp() {
+
+void test_decode_header_set_stamp() {
     BasePacket packet;
     uint8_t expected_topic = 2;
     uint8_t expected_command = 5;
@@ -346,7 +347,7 @@ void test_packetize_with_crc() {
 //                      Depacketize                       //
 ////////////////////////////////////////////////////////////
 
-void test_packet_min_length() {
+void test_depacketize_min_length() {
     BasePacket packet;
     vector<uint8_t> data = {1,2,3,4};
     TEST_ASSERT_EQUAL(BAD_PACKET_LENGTH, BasePacket::depacketize(data, packet));
@@ -457,7 +458,7 @@ void run_packet_tests() {
     RUN_TEST(test_constructor);
 
     // Configuration
-    RUN_TEST(test_base);
+    RUN_TEST(test_configuration_base);
     RUN_TEST(test_max_topic_id);
     RUN_TEST(test_topic_id_edge_cases);
     RUN_TEST(test_max_command_id);
@@ -466,8 +467,8 @@ void run_packet_tests() {
     RUN_TEST(test_data_length_edge_cases);
 
     // Stamp
-    RUN_TEST(test_max_millistamp);
-    RUN_TEST(test_sketch_millistamp);
+    RUN_TEST(test_stamp_max_millistamp);
+    RUN_TEST(test_stamp_sketch_millistamp);
 
     // Encode header
     RUN_TEST(test_encode_header_must_stamp);
@@ -475,8 +476,8 @@ void run_packet_tests() {
     RUN_TEST(test_encode_header_random_stamp);
 
     // Decode header
-    RUN_TEST(test_header_invalid_length);
-    RUN_TEST(test_decode_set_stamp);
+    RUN_TEST(test_decode_header_invalid_length);
+    RUN_TEST(test_decode_header_set_stamp);
     RUN_TEST(test_decode_header_random_stamp);
 
     // CRC
@@ -487,13 +488,12 @@ void run_packet_tests() {
     RUN_TEST(test_packetize_with_crc);
 
     // Depacketize
+    RUN_TEST(test_depacketize_min_length);
     RUN_TEST(test_depacketize_bad_crc);
     RUN_TEST(test_depacketize_bad_data_length);
     RUN_TEST(test_depacketize_millistamp_too_large);
     RUN_TEST(test_depacketize_full);
-
-    // Depacketize
-    RUN_TEST(test_packet_min_length);
+    
 }
 
 void setup(){
