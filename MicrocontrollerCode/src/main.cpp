@@ -22,6 +22,8 @@ using namespace std;
 
 #define LED 2
 
+SerialComms comms;
+
 void setup() {
     Serial.begin(115200);
     pinMode(LED, OUTPUT);
@@ -32,7 +34,7 @@ void loop() {
 
     if (Serial.available()) {
         digitalWrite(LED, HIGH);
-        process_uart();
+        comms.process_uart();
     }
     else {
         digitalWrite(LED, LOW);

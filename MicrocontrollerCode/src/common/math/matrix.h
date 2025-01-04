@@ -2,6 +2,7 @@
 
 #include <array>
 #include <Arduino.h>
+#include "../globals.h"
 
 // Defining NxM matrix
 // Example call: Matrix<float, 3, 3> mat3x3 = {{{4, 7, 1}, {2, 6, 0}, {0, 5, 0}}};
@@ -76,10 +77,10 @@ template <typename T, size_t row, size_t col>
 void printMatrix(const Matrix<T, row, col>& matrix) {
     for (const auto& r : matrix) {
         for (const auto& val : r) {
-            Serial.print(val);
-            Serial.print(" ");
+            DEBUG(val);
+            DEBUG(" ");
         }
-        Serial.println();
+        DEBUGLN();
     }
 }
 

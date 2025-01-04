@@ -3,7 +3,7 @@
 #include "../math/vector.h"
 #include "../drivers/icm20948.h"
 #include "../gnc/GncBase.h"
-
+#include "../globals.h"
 namespace Cesium {
     
 class TestImuBase {
@@ -28,7 +28,7 @@ public:
         imuBase.run();
 
         printMatrix(imuBase.accel_body);
-        Serial.println();
+        DEBUGLN();
 
         icm.accel.x += 0.1;
         icm.accel.y += 0.1;

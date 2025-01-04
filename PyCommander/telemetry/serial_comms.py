@@ -35,7 +35,7 @@ class SerialComms:
             self.port.open()
 
         if self.port.in_waiting == 0:
-            return False
+            return bytearray()
 
         serial_bytes = bytearray(self.port.readline())
 

@@ -1,6 +1,7 @@
 #include "packet.h"
 #include "../math/bitmath.h"
 #include "crc16.h"
+#include "../clock.h"
 
 namespace Cesium {
 
@@ -188,7 +189,7 @@ packet_codes_t BasePacket::depacketize(std::vector<uint8_t> received_bytes, Base
     }
 
     // Verify millistamp fits within a day
-    if (packet.millistamp >= 86400000) {
+    if (packet.millistamp >= MILLISECS_PER_DAY) {
         DEBUGLN("Packet millistamp " + String(packet.millistamp) + " does not fit within the length of a day (86400000 ms)");
         return MILLISTAMP_OVERFLOW;
     }

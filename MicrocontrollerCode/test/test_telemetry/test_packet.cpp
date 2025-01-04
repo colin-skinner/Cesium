@@ -4,6 +4,8 @@
 #include "common/comms/packet.cpp"
 #include <vector>
 
+// #include "../test/test_telemetry/test_system_status_task.cpp"
+
 using namespace std;
 using namespace Cesium;
 
@@ -502,6 +504,7 @@ void setup(){
     
     UNITY_BEGIN();
     run_packet_tests();
+    // run_all_system_status_tests();
     UNITY_END();
 }
 void loop(){

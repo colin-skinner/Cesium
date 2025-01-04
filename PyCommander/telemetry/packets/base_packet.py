@@ -77,6 +77,7 @@ class Packet:
         result.append(f"Command ID: {self.command}")
         result.append(f"Data Length: {self.data_length}")
         result.append(f"Data: {self.data}")
+        result.append(f"Millistamp: {self.millistamp}")
         return str(result)
 
     

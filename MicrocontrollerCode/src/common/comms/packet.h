@@ -66,6 +66,7 @@ public:
     BasePacket();
 
     packet_codes_t configure(size_t topic, size_t command, std::vector<uint8_t> &data);
+
     packet_codes_t stamp(bool use_sketch_time = false);
 
     packet_codes_t encode_header(bool stamp = true);
