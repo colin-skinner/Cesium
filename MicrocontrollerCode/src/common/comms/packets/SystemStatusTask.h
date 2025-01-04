@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../packet.h"
+#include "../packet_schema.h"
 
 namespace Cesium {
 

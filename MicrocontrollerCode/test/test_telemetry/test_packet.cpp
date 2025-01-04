@@ -1,10 +1,8 @@
 #include <unity.h>
 #include <Arduino.h>
 #include "common/comms/packet.h"
-#include "common/comms/packet.cpp"
-#include <vector>
 
-// #include "../test/test_telemetry/test_system_status_task.cpp"
+#include <vector>
 
 using namespace std;
 using namespace Cesium;

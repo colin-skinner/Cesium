@@ -10,63 +10,23 @@
 #define MILLISECS_PER_DAY  ((time_t)(SECS_PER_DAY * 1000UL)) 
 
 namespace Cesium {
-namespace Clock {
+class Clock {
 
-uint32_t millis_since_midnight = 0;
-uint32_t millis_last_time_sync = 0;
-tmElements_t midnight_time;
+public:
+    static uint32_t millis_since_midnight;
+    static uint32_t millis_last_time_sync;
+    tmElements_t midnight_time;
 
-bool second_accuracy = false;
-bool millisecond_accuracy = false;
+    static bool second_accuracy;
+    static bool millisecond_accuracy;
 
-// DAY, MONTH, and YEAR ALL START AT 1
-bool jump_clock(uint32_t milliseconds_since_midnight, uint8_t day, uint8_t month, uint16_t yr) {
-    
-    millis_since_midnight = milliseconds_since_midnight;
+    // DAY, MONTH, and YEAR ALL START AT 1
+    static bool jump_clock(uint32_t milliseconds_since_midnight, uint8_t day, uint8_t month, uint16_t yr);
 
-    if (millis_since_midnight >= MILLISECS_PER_DAY) {
-        return false;
-    }
+    static uint8_t jump_clock_RTC(DS3232RTC& rtc);
 
-    millis_last_time_sync = millis();
+    static uint32_t get_millis_since_midnight();
 
-    second_accuracy = true;
-    millisecond_accuracy = true;
-
-    return true;
-}
-
-uint8_t jump_clock_RTC(DS3232RTC& rtc) {
-    tmElements_t tm;
-    uint8_t err_code = DS3232RTC::read(tm);
-
-    millis_since_midnight = (tm.Second + SECS_PER_MIN * tm.Minute + SECS_PER_HOUR * tm.Hour) * 1000;
-
-    if (err_code != ESP_OK) {
-        return err_code;
-    }
-
-    jump_clock(millis_since_midnight, tm.Day, tm.Month, tm.Year);
-
-    second_accuracy = true;
-    millisecond_accuracy = false;
-
-    return ESP_OK;
-}
-
-uint32_t get_millis_since_midnight() {
-    if (millis_since_midnight >= millis_last_time_sync) {
-        uint32_t midnight_to_program_start_ms = millis_since_midnight - millis_last_time_sync;
-        return midnight_to_program_start_ms + millis();
-    }
-
-    return millis_last_time_sync % MILLISECS_PER_DAY;
-
-}
-
-
-    
-    
 };
 };
 
