@@ -1,6 +1,6 @@
-from telemetry.packets.topic_packets import *
+from telemetry.topic_packets import *
 from telemetry.serial_comms import SerialComms
-
+# import telemetry.packets.telem_00_system_packets as SystemStatus
 from time import sleep
 
 
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     port_name = f"/dev/{ports[port_num].name}"
     comm.connect(port_name)
 
-    packet_list: list[Packet] = list()
+    packet_list: list[BasePacket] = list()
 
     # packet = SystemStatusPacket()
     # packet.configure(SystemStatusCMD.ACK, bytearray("THIS IS A PAYLOAD", "ascii"))
@@ -37,18 +37,30 @@ if __name__ == "__main__":
     # packet.configure(SystemStatusCMD.REQUEST_ACK, bytearray("Requesting ACK", "ascii"))
     # packet_list.append(packet)
 
+    i = 3
     packet = SystemStatusPacket()
-    packet.configure(4, bytearray(b"\x01\x07"))
-    packet_list.append(packet)
+    clock_packet = ClockPacket()
 
-    comm.port.rtscts
+    # Resets ESP32
+    comm.port.dtr = False
+    sleep(.1)
+    comm.port.dtr = True
+    sleep(1)
+    
+    while (comm.port.in_waiting > 0):
+            received = comm.readline()
+            print(received)
+
+    # comm.port.rtscts
     while True:
-        print("Emitting packet...",end="")
+        print("Emitting packets...")
 
-        for packet in packet_list:
-            packet.packetize()
-            comm.emit_packet(packet)
-            print(packet.packet_bytes)
+        # clock_packet.configure(ClockCMD.JUMP_CLOCK_TELEM, )
+
+        packet.configure(SystemStatusCMD.SUM, bytearray([3, 8]))
+        packet.packetize()
+        comm.emit_packet(packet)
+        # print(packet)
 
         # packet_list[0].packetize()
         # comm.emit_packet(packet_list[0])
@@ -59,8 +71,14 @@ if __name__ == "__main__":
 
         while (comm.port.in_waiting > 0):
             received = comm.readline()
+            # print(received)
             # print(list(received))
-            received_packet = Packet.depacketize(received)
+            received_packet = BasePacket.depacketize(received)
             print(received_packet)
 
-        sleep(.5)
+
+        # sleep(.1)
+
+        print()
+        # sleep(.01)
+        # i += 1

@@ -1,6 +1,6 @@
 import serial
 import serial.tools.list_ports as port_list
-from telemetry.packets.base_packet import Packet, PacketError
+from telemetry.base_packet import BasePacket, PacketError
 import binascii
 
 class SerialComms:
@@ -19,14 +19,14 @@ class SerialComms:
         self.port = serial.Serial(port=port_name,
                     baudrate=baud_rate, timeout=timeout)  # open serial port
 
-    def emit_packet(self, packet: Packet) -> bool:
+    def emit_packet(self, packet: BasePacket) -> bool:
 
         # Open port if not already
         if self.port.is_open == False:
             self.port.open()
 
         self.port.write(packet.packet_bytes)
-        self.port.write(b"\n")
+        self.port.write(b"\x00") # Delimeter
 
     def readline(self):
 
@@ -37,7 +37,7 @@ class SerialComms:
         if self.port.in_waiting == 0:
             return bytearray()
 
-        serial_bytes = bytearray(self.port.readline())
+        serial_bytes = bytearray(self.port.read_until(b"\x00"))
 
         return serial_bytes[:-2]
         

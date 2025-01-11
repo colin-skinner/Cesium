@@ -20,6 +20,8 @@ class Topic(Enum):
     GNC_CONTROL = 13
     ACTUATORS = 14
 
+    BAD_TOPIC = -1
+
 ##############################
 #         Command ID         #
 ##############################

@@ -1,9 +1,14 @@
 import os, sys
 sys.path.append(".") # Adds PyCommander 
 print(os.getcwd())
-from telemetry.packets.base_packet import Packet, PacketError
-from telemetry.packets.topic_packets import *
-from telemetry.packets.command_schema import *
+from telemetry.base_packet import BasePacket, PacketError
+from telemetry.topic_packets import *
+from telemetry.command_schema import *
+
+import telemetry.packets as packets
+
+
+ 
 import pytest
 
 ##############################
@@ -24,9 +29,18 @@ def test_power_pkt():
     assert packet.topic == Topic.POWER.value
     assert packet.command == PowerCMD.BATTERY_STATS.value
 
+def test_clock_pkt():
+    packet = ClockPacket()
+    packet.configure(ClockCMD.STATUS)
+
+    assert packet.topic == Topic.CLOCK.value
+    assert packet.command == ClockCMD.STATUS.value
+
 ##############################
 #     System Status Pkt      #
 ##############################
+
+
 
 
 

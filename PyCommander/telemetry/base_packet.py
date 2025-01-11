@@ -2,7 +2,8 @@
 from datetime import datetime
 from .crc import crc16xmodem
 from enum import Enum
-from telemetry.packets.command_schema import *
+from .command_schema import *
+from cobs import cobs
 
 def check_within_bits(value: int, bits: int, title: str) -> None:
     # print(type(value))
@@ -23,7 +24,7 @@ def get_day_millis() -> tuple[int, datetime]:
 
 class PacketError(OverflowError): ...
 
-class Packet:
+class BasePacket:
 
     TOPIC_BITS = 6
     COMMAND_BITS = 4
@@ -53,19 +54,19 @@ class Packet:
         
         # Correcting Enums
         if issubclass(type(topic), Enum):
-            print("Converting Topic into int")
+            # print("Converting Topic into int")
             topic = int(topic.value)
 
         if issubclass(type(command), Enum):
-            print("Converting Command into int")
+            # print("Converting Command into int")
             command = int(command.value)
 
-        check_within_bits(topic, Packet.TOPIC_BITS, "topic")
+        check_within_bits(topic, BasePacket.TOPIC_BITS, "topic")
 
-        check_within_bits(command, Packet.COMMAND_BITS, "command")
+        check_within_bits(command, BasePacket.COMMAND_BITS, "command")
 
         self.data_length = len(data)
-        check_within_bits(self.data_length, Packet.DATA_LENGTH_BITS, "data_length")
+        check_within_bits(self.data_length, BasePacket.DATA_LENGTH_BITS, "data_length")
         
         self.topic = topic
         self.command = command
@@ -92,8 +93,8 @@ class Packet:
         return self.data_length
     
     def stamp(self) -> None:
-        self.millistamp, Packet.dt_midnight = get_day_millis()
-        check_within_bits(self.millistamp, Packet.MILLISTAMP_BITS, "millistamp")
+        self.millistamp, BasePacket.dt_midnight = get_day_millis()
+        check_within_bits(self.millistamp, BasePacket.MILLISTAMP_BITS, "millistamp")
 
     def encode_header(self, stamp = True) -> bytearray:
         # Timestamp (27 bits), Topic (6 bits), Command (4), Length (11), data_length, CRC (16 bits)
@@ -150,7 +151,7 @@ class Packet:
         # Verified using https://crccalc.com/
         return crc16xmodem(data)
 
-    def packetize(self, encode_header = True, stamp = True):
+    def packetize(self, encode_header = True, stamp = True, cobs_encode = True):
 
         # Encodes header with stamp preference if specified
         if encode_header:
@@ -161,13 +162,19 @@ class Packet:
         
         pre_crc = self.header_bytes + self.data
 
-        self.crc = Packet.calc_crc(pre_crc)
+        self.crc = BasePacket.calc_crc(pre_crc)
 
         self.packet_bytes = pre_crc + bytearray([ (self.crc >> 8) & 0xFF, self.crc & 0xFF])
 
-    @staticmethod 
-    def depacketize(data_bytes: bytearray):
+        # COBS encode
+        if cobs_encode:                                          # Delimeter
+            self.packet_bytes = cobs.encode(self.packet_bytes)
 
+    @staticmethod 
+    def depacketize(data_bytes: bytearray, cobs_decode = True):
+
+        if cobs_decode:
+            data_bytes = cobs.decode(data_bytes)
 
         # Extracting CRC
         crc_bytes = data_bytes[-2:]
@@ -177,26 +184,26 @@ class Packet:
         pre_crc = data_bytes[:-2]
 
         # Checking CRC
-        decoded_crc = Packet.calc_crc(pre_crc)
+        decoded_crc = BasePacket.calc_crc(pre_crc)
         if decoded_crc != crc:
-            raise PacketError(f"Packet CRC {hex(crc)} does not match decoded CRC {hex(decoded_crc)}")
+            raise PacketError(f"BasePacket CRC {hex(crc)} does not match decoded CRC {hex(decoded_crc)}")
         
         # Extracting header
-        header_bytes = pre_crc[:Packet.HEADER_LENGTH_BYTES]
-        millistamp, topic_id, command_id, data_length = Packet.decode_header(header_bytes)
+        header_bytes = pre_crc[:BasePacket.HEADER_LENGTH_BYTES]
+        millistamp, topic_id, command_id, data_length = BasePacket.decode_header(header_bytes)
 
         # Verify data length
-        data = data_bytes[Packet.HEADER_LENGTH_BYTES:-2]
+        data = data_bytes[BasePacket.HEADER_LENGTH_BYTES:-2]
         if len(data) != data_length:
-            raise PacketError(f"Packet data length ({data_length} bytes) does not match actual data length ({len(data)} bytes)")
+            raise PacketError(f"BasePacket data length ({data_length} bytes) does not match actual data length ({len(data)} bytes)")
         
         # Verify millistamp fits within a day
         if millistamp >= 86400000:
-            raise PacketError(f"Packet millistamp {millistamp} does not fit within the length of a day (86400000 ms)")
+            raise PacketError(f"BasePacket millistamp {millistamp} does not fit within the length of a day (86400000 ms)")
         
         # TODO: Verify topic and command are within the current command schema
 
-        packet = Packet()
+        packet = BasePacket()
         packet.millistamp = millistamp
         packet.topic = topic_id
         packet.command = command_id
@@ -204,6 +211,8 @@ class Packet:
         packet.data = data
         packet.packet_bytes = data_bytes
         packet.header_bytes = header_bytes
+
+        # COBS decode
 
         return packet
 
