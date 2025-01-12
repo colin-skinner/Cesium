@@ -5,14 +5,13 @@
 #include "packet.h"
 #include "packet_schema.h"
 
-#include "packets/SystemStatusTask.h"
 
 namespace Cesium {
 
 class PacketBroker {
 
 private:
-    static uint16_t routed_packets;
+    static size_t routed_packets;
 public:
 
     // PacketBrokerClass() : routed_packets(0) {}

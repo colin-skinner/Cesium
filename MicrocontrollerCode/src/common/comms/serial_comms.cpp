@@ -5,19 +5,30 @@
 namespace Cesium {
 SerialComms::SerialComms() {}
 
-void SerialComms::emit_byte_vector(std::vector<uint8_t> vec) {
+void SerialComms::emit(std::vector<uint8_t> vec) {
     for (auto byte : vec) {
         Serial.write(byte);
     }
-    Serial.println(); // NEED to add a line
+    // Serial.write('\0'); // NEED to add a line
+}
+
+void SerialComms::emit(String str)
+{
+    Serial.write(str.c_str());
 }
 
 void SerialComms::emit_packet(BasePacket& packet) {
-    emit_byte_vector(packet.get_packet());
+    emit(packet.get_packet());
 }
 
 void SerialComms::process_uart() {
-    String message = Serial.readStringUntil('\n');
+    String message = Serial.readStringUntil(0x00);
+
+    for (auto char_str : message) {
+        DEBUG(char_str, HEX);
+        DEBUG(" ");
+    }
+    DEBUGLN();
     std::vector<uint8_t> received_data;
     received_data.assign(message.c_str(), message.c_str() + message.length()); // Copies C string
 

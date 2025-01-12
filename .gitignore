@@ -54,3 +54,5 @@ venv/
 **/.vscode
 **/settings.json
 MicrocontrollerCode/.vscode/settings.json
+
+junk/

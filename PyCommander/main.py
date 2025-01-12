@@ -1,21 +1,22 @@
 from telemetry.topic_packets import *
-from telemetry.serial_comms import SerialComms
+from telemetry.serial_comms import SerialComms, DEFAULT_PORT
 # import telemetry.packets.telem_00_system_packets as SystemStatus
-from time import sleep
+from telemetry.packets.clock_task import ClockTask
+from time import sleep, time
 
 
 
 if __name__ == "__main__":
 
-    comm = SerialComms()
 
-    ports = comm.list_ports(print_output=True)
+    ports = DEFAULT_PORT.list_ports(print_output=True)
     port_num = int(input("Which port to connect to: "))
 
     port_name = f"/dev/{ports[port_num].name}"
-    comm.connect(port_name)
+    DEFAULT_PORT.connect(port_name)
 
     packet_list: list[BasePacket] = list()
+
 
     # packet = SystemStatusPacket()
     # packet.configure(SystemStatusCMD.ACK, bytearray("THIS IS A PAYLOAD", "ascii"))
@@ -42,43 +43,56 @@ if __name__ == "__main__":
     clock_packet = ClockPacket()
 
     # Resets ESP32
-    comm.port.dtr = False
-    sleep(.1)
-    comm.port.dtr = True
-    sleep(1)
+    def reset():
+        DEFAULT_PORT.port.dtr = False
+        sleep(.1)
+        DEFAULT_PORT.port.dtr = True
+        sleep(.1)
     
-    while (comm.port.in_waiting > 0):
-            received = comm.readline()
-            print(received)
+    reset()
+
+    timeout_start = time()
+    while (DEFAULT_PORT.port.in_waiting > 0):
+        received = DEFAULT_PORT.readline()
+        print(received)
+
+        if time() - timeout_start > 1:
+            reset()
+
+    # Jumping clock
+    ClockTask.send_jump_clock()
+    sleep(0.2)
+
+    i = 0
 
     # comm.port.rtscts
     while True:
         print("Emitting packets...")
 
-        # clock_packet.configure(ClockCMD.JUMP_CLOCK_TELEM, )
-
-        packet.configure(SystemStatusCMD.SUM, bytearray([3, 8]))
+        # # SUM
+        i += 1
+        i %= 256
+        packet.configure(SystemStatusCMD.SUM, bytearray([i, 0]))
         packet.packetize()
-        comm.emit_packet(packet)
-        # print(packet)
+        DEFAULT_PORT.emit_packet(packet)
+        print(packet)
 
-        # packet_list[0].packetize()
-        # comm.emit_packet(packet_list[0])
+        # print("success.")
 
-        print("success.")
+        sleep(.01)
 
-        sleep(.1)
-
-        while (comm.port.in_waiting > 0):
-            received = comm.readline()
+        while (DEFAULT_PORT.port.in_waiting > 0):
+            received = DEFAULT_PORT.readline()
+            # received += b"\x01"
+            # print(received.hex())
             # print(received)
             # print(list(received))
             received_packet = BasePacket.depacketize(received)
             print(received_packet)
 
 
-        # sleep(.1)
+        # sleep(.005)
 
-        print()
+        # print()
         # sleep(.01)
         # i += 1

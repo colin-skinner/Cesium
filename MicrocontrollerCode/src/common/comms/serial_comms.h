@@ -13,7 +13,8 @@ private:
 public:
 
     SerialComms();
-    static void emit_byte_vector(std::vector<uint8_t> vec);
+    static void emit(std::vector<uint8_t> vec);
+    static void emit(String str);
 
     static void emit_packet(BasePacket& packet);
 

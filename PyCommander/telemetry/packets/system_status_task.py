@@ -1,13 +1,17 @@
 from ..topic_packets import SystemStatusPacket
 from ..base_packet import BasePacket
-from ..command_schema import *
+from ..command_schema import Topic, SystemStatusCMD
+
 
 from .packet_task import PacketTask
 
-class SystemStatusTask(PacketTask):
 
+
+class SystemStatusTask(PacketTask):
+    
     @staticmethod
-    def route_packet(packet: BasePacket):
+    def route_packet(packet: SystemStatusPacket) -> SystemStatusCMD:
+
 
         if (packet.topic != Topic.SYSTEM_STATUS.value):
             print(f"Routing - BasePacket Topic {packet.topic} not {Topic.SYSTEM_STATUS.value}")

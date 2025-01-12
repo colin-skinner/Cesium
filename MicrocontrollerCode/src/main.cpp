@@ -5,6 +5,7 @@
 #include "common/globals.h"
 #include <vector>
 #include <string>
+#include "common/comms/packets/SystemStatusTask.h"
 
 /* You only need to format LittleFS the first time you run a
    test or else use the LITTLEFS plugin to create a partition
@@ -33,11 +34,19 @@ void setup() {
 void loop() {
 
     if (Serial.available()) {
+        uint32_t time = millis();
         digitalWrite(LED, HIGH);
         comms.process_uart();
+        // Serial.println(millis() - time);
     }
     else {
         digitalWrite(LED, LOW);
     }
     delay(10);
+
+    // digitalWrite(LED, HIGH);
+    // SystemStatusTask::send_ack();
+    // digitalWrite(LED, LOW);
+    // delay(1000);
+
 }

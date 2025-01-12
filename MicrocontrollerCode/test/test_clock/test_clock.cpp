@@ -18,6 +18,9 @@ void test_max_time_error() {
     TEST_ASSERT_FALSE(Clock::jump_clock(MILLISECS_PER_DAY + 1, 1, 1, 2000));
 }
 
+// Does ESP clock work correctly
+
+
 ////////////////////////////////////////////////////////////
 //              Get millis since midnight                 //
 ////////////////////////////////////////////////////////////

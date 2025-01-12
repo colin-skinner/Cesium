@@ -17,7 +17,10 @@ enum class Topic {
     GNC_NAVIGATION = 11,
     GNC_GUIDANCE = 12,
     GNC_CONTROL = 13,
-    ACTUATORS = 14
+    ACTUATORS = 14,
+
+    TEST_ROCKETS = 30
+
 };
 
 // ##############################
@@ -123,7 +126,10 @@ enum class ActuatorCMD {
     COMMAND = 1
 };
 
-
+enum class TestRocketsCMD {
+    PACKET_A = 0,
+    PACKET_B = 1
+};
 
 
 

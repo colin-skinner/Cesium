@@ -20,6 +20,8 @@ public:
     static bool second_accuracy;
     static bool millisecond_accuracy;
 
+    Clock();
+
     // DAY, MONTH, and YEAR ALL START AT 1
     static bool jump_clock(uint32_t milliseconds_since_midnight, uint8_t day, uint8_t month, uint16_t yr);
 

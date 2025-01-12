@@ -10,7 +10,7 @@
 // #define DEBUGLN(val) Serial.println(val)
 // #define DEBUGLN(val, encoding) Serial.println(val, encoding)
 #else
-#define DEBUG(val)
+#define DEBUG
 #define DEBUG_FLUSH()
 #define DEBUGLN(val)
 #endif

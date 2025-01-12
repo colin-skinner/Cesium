@@ -2,14 +2,16 @@
 #include "../math/bitmath.h"
 #include "crc16.h"
 #include "../clock.h"
+#include "cobs.h"
 
+using namespace std;
 namespace Cesium {
 
 BasePacket::BasePacket() : topic{0}, command{0}, millistamp{0}, crc{0}, data{}, data_length{0}, header_bytes{}, packet_bytes{}
 {
 }
 
-packet_codes_t BasePacket::configure(size_t topic, size_t command, std::vector<uint8_t> &data)
+packet_codes_t BasePacket::configure(size_t topic, size_t command, vector<uint8_t> &data)
 {
     
 
@@ -34,7 +36,7 @@ packet_codes_t BasePacket::stamp(bool use_sketch_time)
         this->millistamp = millis();
     }
     else {
-        this->millistamp = 1;
+        this->millistamp = Clock::get_millis_since_midnight();
     }
 
     RETURN_WITH_CODE_IF_FALSE(BAD_MILLISTAMP_LENGTH, check_within_bits(millistamp, MILLISTAMP_BITS, "millistamp"));
@@ -69,7 +71,7 @@ packet_codes_t BasePacket::encode_header(bool stamp)
     return BASE_PACKET_NO_ERR;
 }
 
-packet_codes_t BasePacket::decode_header(std::vector<uint8_t> &header_bytes, uint32_t &millistamp, size_t &topic, size_t &command, size_t &data_length)
+packet_codes_t BasePacket::decode_header(vector<uint8_t> &header_bytes, uint32_t &millistamp, size_t &topic, size_t &command, size_t &data_length)
 {
 
     if (header_bytes.size() != 6) {
@@ -101,12 +103,12 @@ packet_codes_t BasePacket::decode_header(std::vector<uint8_t> &header_bytes, uin
     return BASE_PACKET_NO_ERR;
 }
 
-uint32_t BasePacket::calc_crc16(std::vector<uint8_t> &data)
+uint32_t BasePacket::calc_crc16(vector<uint8_t> &data)
 {
     return crc16xmodem(data);
 }
 
-packet_codes_t BasePacket::packetize(bool encode_header, bool stamp)
+packet_codes_t BasePacket::packetize(bool encode_header, bool stamp, bool cobs_encode)
 {
     if (encode_header) {
         this->encode_header(stamp);
@@ -125,36 +127,67 @@ packet_codes_t BasePacket::packetize(bool encode_header, bool stamp)
     //     return BAD_PACKET_LENGTH;
     // }
 
-    this->packet_bytes.clear();
-    packet_bytes = header_bytes;
+    vector<uint8_t> raw_data;
 
-    this->packet_bytes.reserve(full_packet_length);
-    packet_bytes.insert(packet_bytes.end(), data.begin(), data.end());
+    raw_data.clear();
+    raw_data = header_bytes;
 
-    if (packet_bytes.size() + 2 != full_packet_length) {
+    raw_data.reserve(full_packet_length);
+    raw_data.insert(raw_data.end(), data.begin(), data.end());
+
+    if (raw_data.size() + 2 != full_packet_length) {
         return BAD_PACKET_LENGTH;
     }
-    this->crc = calc_crc16(packet_bytes);
+    this->crc = calc_crc16(raw_data);
 
-    packet_bytes.push_back((crc >> 8) & 0xFF);
-    packet_bytes.push_back(crc & 0xFF);
+    raw_data.push_back((crc >> 8) & 0xFF);
+    raw_data.push_back(crc & 0xFF);
+
+    if (cobs_encode) {
+        // COBS encode
+        if (CobsTranscoder::Encode(raw_data, this->packet_bytes) == false) {
+            return BAD_COBS;
+        }
+    }
+    else {
+        this->packet_bytes = raw_data;
+    }
+    
 
     return BASE_PACKET_NO_ERR;
 }
 
-void BasePacket::extract_header_and_data(std::vector<uint8_t> &packet, std::vector<uint8_t> &header, std::vector<uint8_t> &data)
+void BasePacket::extract_header_and_data(vector<uint8_t> &packet, vector<uint8_t> &header, vector<uint8_t> &data)
 {
-    header = std::vector<uint8_t>(packet.begin(), packet.begin() + 6); 
-    data = std::vector<uint8_t>(packet.begin() + 6, packet.end()); 
+    header = vector<uint8_t>(packet.begin(), packet.begin() + 6); 
+    data = vector<uint8_t>(packet.begin() + 6, packet.end()); 
 }
 
-packet_codes_t BasePacket::depacketize(std::vector<uint8_t> received_bytes, BasePacket &packet)
+packet_codes_t BasePacket::depacketize(const std::vector<uint8_t> &raw_data, BasePacket &packet, bool cobs_decode)
 {
+    vector<uint8_t> received_bytes;
+    
+    if (cobs_decode) {
+        // COBS decode
+        if (CobsTranscoder::Decode(raw_data, received_bytes) == false) {
+            return BAD_COBS;
+        }
+
+        received_bytes.pop_back(); // Delete 0 at end
+    }
+    else {
+        received_bytes = raw_data;
+    }
+
     packet.packet_bytes = received_bytes;
 
-    size_t received_packet_length = received_bytes.size();
+    // for (auto char_str : received_bytes) {
+    //     DEBUG(char_str, HEX);
+    //     DEBUG(" ");
+    // }
+    // DEBUGLN();
 
-    if (received_packet_length < 8) {
+    if (received_bytes.size() < 8) {
         DEBUGLN("Packet must 8 bytes or larger");
         return BAD_PACKET_LENGTH;
     }
@@ -180,11 +213,12 @@ packet_codes_t BasePacket::depacketize(std::vector<uint8_t> received_bytes, Base
     
     // Extract header from data, and decode header into BasePacket object
     extract_header_and_data(received_bytes, packet.header_bytes, packet.data);
+
     decode_header(packet.header_bytes, packet.millistamp, packet.topic, packet.command, packet.data_length);
 
     // Verify data length
     if (packet.data.size() != packet.data_length) {
-        DEBUGLN("Packet data length" + String(packet.data_length) + " does not match actual data length" + String(packet.data.size()));
+        DEBUGLN("Packet data length " + String(packet.data_length) + " does not match actual data length" + String(packet.data.size()));
         return DATA_LENGTH_MISMATCH;
     }
 

@@ -77,7 +77,8 @@ class BasePacket:
         result.append(f"Operation ID: {self.topic}")
         result.append(f"Command ID: {self.command}")
         result.append(f"Data Length: {self.data_length}")
-        result.append(f"Data: {self.data}")
+        result.append(f"Data: {self.data.hex(sep=',')}")
+        result.append(f"ASCII Data: {self.data}")
         result.append(f"Millistamp: {self.millistamp}")
         return str(result)
 
@@ -211,8 +212,6 @@ class BasePacket:
         packet.data = data
         packet.packet_bytes = data_bytes
         packet.header_bytes = header_bytes
-
-        # COBS decode
 
         return packet
 

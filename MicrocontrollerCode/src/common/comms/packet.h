@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <vector>
 #include "../globals.h"
-
+#include "cobs.h"
 
 // TODO: Add error enum return codes
 
@@ -26,7 +26,9 @@ enum packet_codes_t {
     MISSING_MILLISTAMP,
     MISSING_HEADER,
 
-    MILLISTAMP_OVERFLOW
+    MILLISTAMP_OVERFLOW,
+
+    BAD_COBS
 
 };
 
@@ -45,8 +47,12 @@ private:
 
     std::vector<uint8_t> header_bytes;
     std::vector<uint8_t> packet_bytes;
+    // uint8_t packet_buffer[2056];
+    
 
     static void extract_header_and_data(std::vector<uint8_t> &packet, std::vector<uint8_t> &header, std::vector<uint8_t> &data);
+
+    // void cobs_encode();
 
 
 public:
@@ -57,6 +63,7 @@ public:
     
     static constexpr size_t HEADER_LENGTH_BYTES = 6;
     static constexpr size_t CRC_BYTES = 2;
+    // Total packet length = 2048 (2^11) + 6 + 2 = 
 
     static constexpr size_t MAX_TOPIC_ID = (1 << TOPIC_BITS)  - 1;
     static constexpr size_t MAX_COMMAND_ID = (1 << COMMAND_BITS)  - 1;
@@ -74,8 +81,8 @@ public:
 
     static uint32_t calc_crc16(std::vector<uint8_t> &data);
 
-    packet_codes_t packetize(bool encode_header = true, bool stamp = true);
-    static packet_codes_t depacketize(std::vector<uint8_t> data_bytes, BasePacket& packet);
+    packet_codes_t packetize(bool encode_header = true, bool stamp = true, bool cobs_encode = true);
+    static packet_codes_t depacketize(const std::vector<uint8_t> &raw_data, BasePacket& packet, bool cobs_decode = true);
 
     // Getters for testing
     inline size_t get_topic() {return topic;} 

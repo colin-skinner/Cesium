@@ -28,7 +28,7 @@ class SerialComms:
         self.port.write(packet.packet_bytes)
         self.port.write(b"\x00") # Delimeter
 
-    def readline(self):
+    def readline(self, delete_zero_byte = True):
 
         # Open port if not already
         if self.port.is_open == False:
@@ -39,9 +39,12 @@ class SerialComms:
 
         serial_bytes = bytearray(self.port.read_until(b"\x00"))
 
-        return serial_bytes[:-2]
+        if delete_zero_byte:
+            serial_bytes = serial_bytes[:-1]
         
-    
+        return serial_bytes
+        
+DEFAULT_PORT: SerialComms = SerialComms() 
 
     
 

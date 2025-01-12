@@ -24,6 +24,10 @@ SystemStatusCMD SystemStatusTask::route_packet(BasePacket &packet)
         DEBUGLN("NACK");
         break;
 
+    case SystemStatusCMD::NOT_IMPLEMENTED:
+        DEBUGLN("NOT_IMP");
+        break;
+
     case SystemStatusCMD::RESET: // TODO
         DEBUGLN("RESET");
         send_not_implemented("SYSTEM_STATUS::RESET");
@@ -48,10 +52,10 @@ SystemStatusCMD SystemStatusTask::route_packet(BasePacket &packet)
     DEBUGLN("SUM");
         send_sum(packet);
         break;
-
     default:
         DEBUGLN("Did not finish routing packet");
         SystemStatusTask::send_nack("BAD COMMAND");
+        return SystemStatusCMD(-1);
     }
 
     return command;
@@ -62,6 +66,7 @@ void SystemStatusTask::send_ack(const char* message)
     BasePacket ACK_PACKET;
     std::vector<uint8_t> data(message, message + strlen(message));
     ACK_PACKET.configure(0, 1, data);
+    // ACK_PACKET.set_millistamp(1);
     ACK_PACKET.packetize();
 
     SerialComms::emit_packet(ACK_PACKET);
@@ -102,7 +107,7 @@ void SystemStatusTask::send_not_implemented(const char* message) {
 
     
     SerialComms::emit_packet(packet);
-    DEBUGLN("Emitted NotImplementedl Packet");
+    DEBUGLN("Emitted NotImplemented Packet");
 }
 
 

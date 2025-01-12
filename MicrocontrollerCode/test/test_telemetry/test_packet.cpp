@@ -1,7 +1,7 @@
 #include <unity.h>
 #include <Arduino.h>
 #include "common/comms/packet.h"
-
+#include "common/comms/cobs.h"
 #include <vector>
 
 using namespace std;
@@ -296,6 +296,35 @@ void test_crc() {
     TEST_ASSERT_EQUAL_UINT32(0x982B, result);
 }
 
+
+////////////////////////////////////////////////////////////
+//                          CRC                           //
+////////////////////////////////////////////////////////////
+
+void test_cobs_encode() {
+    vector<uint8_t> test_vec = {0x92, 0x24, 0x86, 0x00, 0xfe, 0xa4, 0x59, 0xa3, 0xde, 0x7e, 0xf2, 0x00, 0x3a, 0x15, 0x14, 0x00, 0x01};
+    vector<uint8_t> expected = {0x04, 0x92, 0x24, 0x86, 0x08, 0xFE, 0xA4, 0x59, 0xA3, 0xDE, 0x7E, 0xF2, 0x04, 0x3A, 0x15, 0x14, 0x02, 0x01, 0x00};
+
+    vector<uint8_t> result;
+
+
+
+    TEST_ASSERT_TRUE(CobsTranscoder::Encode(test_vec, result)); 
+    TEST_ASSERT_TRUE(result == expected);
+}
+
+void test_cobs_decode() {
+    vector<uint8_t> test_vec = {0x04, 0x92, 0x24, 0x86, 0x08, 0xFE, 0xA4, 0x59, 0xA3, 0xDE, 0x7E, 0xF2, 0x04, 0x3A, 0x15, 0x14, 0x02, 0x01, 0x00};
+    vector<uint8_t> expected = {0x92, 0x24, 0x86, 0x00, 0xfe, 0xa4, 0x59, 0xa3, 0xde, 0x7e, 0xf2, 0x00, 0x3a, 0x15, 0x14, 0x00, 0x01};
+
+    vector<uint8_t> result;
+
+
+
+    TEST_ASSERT_TRUE(CobsTranscoder::Decode(test_vec, result)); 
+    TEST_ASSERT_TRUE(result == expected);
+}
+
 ////////////////////////////////////////////////////////////
 //                       Packetize                        //
 ////////////////////////////////////////////////////////////
@@ -308,7 +337,7 @@ void test_packetize_must_encode_header() {
 
 
 
-    TEST_ASSERT_EQUAL(MISSING_HEADER, packet.packetize(false));
+    TEST_ASSERT_EQUAL(MISSING_HEADER, packet.packetize(false, true, false));
 }
 
 void test_packetize_with_crc() {
@@ -333,7 +362,7 @@ void test_packetize_with_crc() {
     uint32_t test_millistamp = 0x123456;
     packet.set_millistamp(test_millistamp);
 
-    TEST_ASSERT_EQUAL(BASE_PACKET_NO_ERR, packet.packetize(true, false));
+    TEST_ASSERT_EQUAL(BASE_PACKET_NO_ERR, packet.packetize(true, false, false));
 
     TEST_ASSERT_EQUAL(test_millistamp, packet.get_millistamp());
 
@@ -343,6 +372,35 @@ void test_packetize_with_crc() {
 
 }
 
+void test_packetize_with_cobs() {
+    // Initalizing packet contents
+    BasePacket packet;
+    vector<uint8_t> data{1,2,3,4};
+
+    // What the CRC and header SHOULD be with this data
+    uint16_t expected_crc = 0x9C54;
+
+
+                                        // HEADER                           
+    vector<uint8_t> expected_packet = {0x02, 0x46, 0x8A, 0xC0, 0x88, 0x04, 0x01, 0x02, 0x03, 0x04, 0x9C, 0x54};
+    vector<uint8_t> cobs_packet = {0x0D, 0x02, 0x46, 0x8A, 0xC0, 0x88, 0x04, 0x01, 0x02, 0x03, 0x04, 0x9C, 0x54, 0x00};
+
+    // What the full packet SHOULD look like (header + data + CRC)
+    
+    packet.configure(1, 1, data);
+
+    // Artificial timestamp
+    uint32_t test_millistamp = 0x123456;
+    packet.set_millistamp(test_millistamp);
+
+    TEST_ASSERT_EQUAL(BASE_PACKET_NO_ERR, packet.packetize(true, false));
+
+    TEST_ASSERT_EQUAL(test_millistamp, packet.get_millistamp());
+
+    TEST_ASSERT_EQUAL(expected_crc, packet.get_crc());
+    
+    TEST_ASSERT_TRUE(packet.get_packet() == cobs_packet);
+}
 ////////////////////////////////////////////////////////////
 //                      Depacketize                       //
 ////////////////////////////////////////////////////////////
@@ -350,7 +408,8 @@ void test_packetize_with_crc() {
 void test_depacketize_min_length() {
     BasePacket packet;
     vector<uint8_t> data = {1,2,3,4};
-    TEST_ASSERT_EQUAL(BAD_PACKET_LENGTH, BasePacket::depacketize(data, packet));
+
+    TEST_ASSERT_EQUAL(BAD_PACKET_LENGTH, BasePacket::depacketize(data, packet, false));
 }
 
 void test_depacketize_bad_crc() {
@@ -370,8 +429,9 @@ void test_depacketize_bad_crc() {
 
     full_packet.back()++; // BAD CRC
 
+
     BasePacket result;
-    TEST_ASSERT_EQUAL(CRC_MISMATCH, BasePacket::depacketize(full_packet, result));
+    TEST_ASSERT_EQUAL(CRC_MISMATCH, BasePacket::depacketize(full_packet, result, false));
 }
 
 void test_depacketize_bad_data_length() {
@@ -389,9 +449,8 @@ void test_depacketize_bad_data_length() {
     full_packet.push_back((expected_crc >> 8) & 0xFF);
     full_packet.push_back(expected_crc & 0xFF);
 
-
     BasePacket result;
-    TEST_ASSERT_EQUAL(DATA_LENGTH_MISMATCH, BasePacket::depacketize(full_packet, result));
+    TEST_ASSERT_EQUAL(DATA_LENGTH_MISMATCH, BasePacket::depacketize(full_packet, result, false));
 }
 
 void test_depacketize_millistamp_too_large() {
@@ -411,9 +470,10 @@ void test_depacketize_millistamp_too_large() {
     full_packet.push_back((expected_crc >> 8) & 0xFF);
     full_packet.push_back(expected_crc & 0xFF);
 
+    // String full_packet_str((char*)full_packet.data());
 
     BasePacket result;
-    TEST_ASSERT_EQUAL(MILLISTAMP_OVERFLOW, BasePacket::depacketize(full_packet, result));
+    TEST_ASSERT_EQUAL(MILLISTAMP_OVERFLOW, BasePacket::depacketize(full_packet, result, false));
 }
 
 void test_depacketize_full() {
@@ -434,9 +494,11 @@ void test_depacketize_full() {
     full_packet.push_back((expected_crc >> 8) & 0xFF);
     full_packet.push_back(expected_crc & 0xFF);
 
+    // String full_packet_str((char*)full_packet.data());
+
 
     BasePacket result;
-    TEST_ASSERT_EQUAL(BASE_PACKET_NO_ERR, BasePacket::depacketize(full_packet, result));
+    TEST_ASSERT_EQUAL(BASE_PACKET_NO_ERR, BasePacket::depacketize(full_packet, result, false));
 
     TEST_ASSERT_EQUAL(millistamp, result.get_millistamp());
     TEST_ASSERT_EQUAL(topic, result.get_topic());
@@ -446,6 +508,19 @@ void test_depacketize_full() {
     TEST_ASSERT_TRUE(result.get_header() == expected_header);
     TEST_ASSERT_TRUE(result.get_packet() == full_packet);
 
+}
+
+void test_depacketize_with_cobs() {
+
+    BasePacket packet;
+
+    vector<uint8_t> decoded_packet = {0x02, 0x46, 0x8A, 0xC0, 0x88, 0x04, 0x01, 0x02, 0x03, 0x04, 0x9C, 0x54};
+    vector<uint8_t> packet_bytes = {0x0D, 0x02, 0x46, 0x8A, 0xC0, 0x88, 0x04, 0x01, 0x02, 0x03, 0x04, 0x9C, 0x54, 0x00};
+    vector<uint8_t> wrong_decoded_packet = {0x01, 0x46, 0x8A, 0xC0, 0x88, 0x04, 0x01, 0x02, 0x03, 0x04, 0x9C, 0x54};
+
+    TEST_ASSERT_EQUAL(BASE_PACKET_NO_ERR, BasePacket::depacketize(packet_bytes, packet));
+    TEST_ASSERT_TRUE(packet.get_packet() == decoded_packet);
+    TEST_ASSERT_FALSE(packet.get_packet() == wrong_decoded_packet);
 }
 
 ////////////////////////////////////////////////////////////
@@ -483,9 +558,14 @@ void run_packet_tests() {
     // CRC
     RUN_TEST(test_crc);
 
+    // COBS
+    RUN_TEST(test_cobs_encode);
+    RUN_TEST(test_cobs_decode);
+
     // Packetize
     RUN_TEST(test_packetize_must_encode_header);
     RUN_TEST(test_packetize_with_crc);
+    RUN_TEST(test_packetize_with_cobs);
 
     // Depacketize
     RUN_TEST(test_depacketize_min_length);
@@ -493,6 +573,7 @@ void run_packet_tests() {
     RUN_TEST(test_depacketize_bad_data_length);
     RUN_TEST(test_depacketize_millistamp_too_large);
     RUN_TEST(test_depacketize_full);
+    RUN_TEST(test_depacketize_with_cobs);
     
 }
 
