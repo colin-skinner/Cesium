@@ -38,26 +38,11 @@ if __name__ == "__main__":
     # packet.configure(SystemStatusCMD.REQUEST_ACK, bytearray("Requesting ACK", "ascii"))
     # packet_list.append(packet)
 
-    i = 3
+
     packet = SystemStatusPacket()
     clock_packet = ClockPacket()
 
-    # Resets ESP32
-    def reset():
-        DEFAULT_PORT.port.dtr = False
-        sleep(.1)
-        DEFAULT_PORT.port.dtr = True
-        sleep(.1)
-    
-    reset()
-
-    timeout_start = time()
-    while (DEFAULT_PORT.port.in_waiting > 0):
-        received = DEFAULT_PORT.readline()
-        print(received)
-
-        if time() - timeout_start > 1:
-            reset()
+    DEFAULT_PORT.restart_port()
 
     # Jumping clock
     ClockTask.send_jump_clock()

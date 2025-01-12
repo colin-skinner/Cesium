@@ -31,8 +31,9 @@ bool Clock::jump_clock(uint32_t milliseconds_since_midnight, uint8_t day, uint8_
 
     return true;
 }
+ 
 
-uint8_t Clock::jump_clock_RTC(DS3232RTC &rtc)
+uint8_t Clock::jump_clock_RTC(DS3232RTC &rtc) // TODO
 {
     tmElements_t tm;
     uint8_t err_code = DS3232RTC::read(tm);

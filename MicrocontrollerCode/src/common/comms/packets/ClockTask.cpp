@@ -24,8 +24,8 @@ ClockCMD ClockTask::route_packet(BasePacket &packet)
 
     case ClockCMD::JUMP_CLOCK_TELEM: // No further action
         DEBUGLN("JUMP_CLOCK_TELEM");
-        jump_clock_telem(packet);
         SystemStatusTask::send_ack("CLOCK::JUMP_CLOCK_TELEM");
+        jump_clock_telem(packet);
         break;
 
     case ClockCMD::JUMP_CLOCK_GPS: // TODO
@@ -66,8 +66,9 @@ bool ClockTask::jump_clock_telem(BasePacket &packet)
     uint8_t day = data[0];
     uint8_t month = data[1];
     uint16_t year = data[2];
+
     // Set clock of ESP32
-    Clock::jump_clock(packet.get_millistamp(), day, month, year);
+    RETURN_FALSE_IF_FALSE(Clock::jump_clock(packet.get_millistamp(), day, month, year));
 
     send_jump_clock_response("success");
     
@@ -80,6 +81,7 @@ void ClockTask::send_jump_clock_response(String message)
 
     BasePacket packet;
     packet.configure((int)Topic::CLOCK, (int)ClockCMD::JUMP_CLOCK_TELEM, data);
+    packet.packetize();
 
     SerialComms::emit_packet(packet);
 }

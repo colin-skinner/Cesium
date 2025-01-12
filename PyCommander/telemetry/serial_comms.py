@@ -1,6 +1,7 @@
 import serial
 import serial.tools.list_ports as port_list
 from telemetry.base_packet import BasePacket, PacketError
+from time import sleep,time
 import binascii
 
 class SerialComms:
@@ -18,6 +19,26 @@ class SerialComms:
     def connect(self, port_name: str, baud_rate = 115200, timeout = 0.3):
         self.port = serial.Serial(port=port_name,
                     baudrate=baud_rate, timeout=timeout)  # open serial port
+        
+    def restart_port(self):
+        # Resets ESP32
+        def reset():
+            DEFAULT_PORT.port.dtr = False
+            sleep(.1)
+            DEFAULT_PORT.port.dtr = True
+            sleep(.1)
+    
+        reset()
+
+        timeout_start = time()
+        while (DEFAULT_PORT.port.in_waiting > 0):
+            received = DEFAULT_PORT.readline()
+            # print(received)
+
+            if time() - timeout_start > 1:
+                reset()
+
+        
 
     def emit_packet(self, packet: BasePacket) -> bool:
 
