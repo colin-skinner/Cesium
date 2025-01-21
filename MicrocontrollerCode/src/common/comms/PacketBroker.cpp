@@ -1,7 +1,7 @@
 #include "PacketBroker.h"
 
-#include "packets/SystemStatusTask.h"
-#include "packets/ClockTask.h"
+#include "../tasks/SystemStatusTask.h"
+#include "../tasks/ClockTask.h"
 
 namespace Cesium {
 
@@ -23,7 +23,7 @@ Topic PacketBroker::route_packet(BasePacket &packet)
 
     case Topic::TEST_ROCKETS:
         DEBUG("Received Test Rocket Packet - ");
-        ClockTask::route_packet(packet);
+        TestRocketTask::route_packet(packet);
         break;
 
 

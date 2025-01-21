@@ -3,7 +3,7 @@
 
 #include "common/comms/PacketBroker.h"
 
-#include "common/comms/packets/SystemStatusTask.h"
+#include "common/tasks/SystemStatusTask.h"
 
 #include "common/comms/packet_schema.h"
 #include <vector>

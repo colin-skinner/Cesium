@@ -1,24 +1,24 @@
 #include "serial_comms.h"
 #include "PacketBroker.h" //Importing PacketBroker
 
-#include "packets/SystemStatusTask.h" // ACK
+#include "../tasks/SystemStatusTask.h" // ACK
 namespace Cesium {
 SerialComms::SerialComms() {}
 
-void SerialComms::emit(std::vector<uint8_t> vec) {
+void SerialComms::emit(std::vector<uint8_t> vec, CommsInterface interface) {
     for (auto byte : vec) {
         Serial.write(byte);
     }
     // Serial.write('\0'); // NEED to add a line
 }
 
-void SerialComms::emit(String str)
+void SerialComms::emit(String str, CommsInterface interface)
 {
     Serial.write(str.c_str());
 }
 
-void SerialComms::emit_packet(BasePacket& packet) {
-    emit(packet.get_packet());
+void SerialComms::emit_packet(BasePacket& packet, CommsInterface interface) {
+    emit(packet.get_packet(), interface);
 }
 
 void SerialComms::process_uart() {

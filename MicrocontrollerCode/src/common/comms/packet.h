@@ -63,7 +63,7 @@ public:
     
     static constexpr size_t HEADER_LENGTH_BYTES = 6;
     static constexpr size_t CRC_BYTES = 2;
-    // Total packet length = 2048 (2^11) + 6 + 2 = 
+    // Total packet length = 2048 (2^11) + 6 + 2 = 2058
 
     static constexpr size_t MAX_TOPIC_ID = (1 << TOPIC_BITS)  - 1;
     static constexpr size_t MAX_COMMAND_ID = (1 << COMMAND_BITS)  - 1;
@@ -91,9 +91,9 @@ public:
     inline size_t get_millistamp() {return millistamp;} 
     inline size_t get_crc() {return crc;} 
 
-    inline std::vector<uint8_t>& get_data() {return data;} 
-    inline std::vector<uint8_t>& get_header() {return header_bytes;} 
-    inline std::vector<uint8_t>& get_packet() {return packet_bytes;} 
+    inline const std::vector<uint8_t>& get_data() {return data;} 
+    inline const std::vector<uint8_t>& get_header() {return header_bytes;} 
+    inline const  std::vector<uint8_t>& get_packet() {return packet_bytes;} 
 
     inline void set_millistamp(uint32_t stamp) {millistamp = stamp;} 
 

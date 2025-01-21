@@ -5,7 +5,7 @@
 #include "common/globals.h"
 #include <vector>
 #include <string>
-#include "common/comms/packets/SystemStatusTask.h"
+#include "common/tasks/SystemStatusTask.h"
 
 /* You only need to format LittleFS the first time you run a
    test or else use the LITTLEFS plugin to create a partition

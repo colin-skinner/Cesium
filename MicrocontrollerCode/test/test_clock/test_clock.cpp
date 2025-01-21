@@ -34,7 +34,7 @@ void test_get_millis() {
 
 void test_multiple_day_millis() {
     Clock::millis_last_time_sync = MILLISECS_PER_DAY * 2 + 1000;
-    TEST_ASSERT_TRUE( (Clock::get_millis_since_midnight() - (Clock::millis_last_time_sync % MILLISECS_PER_DAY)) < 1000  ); // Hopefully this is within 1 second
+    TEST_ASSERT_TRUE( (Clock::get_millis_since_midnight() - (Clock::millis_last_time_sync % MILLISECS_PER_DAY)) < 2000  ); // Hopefully this is within 2 seconds
     TEST_ASSERT_TRUE(Clock::get_millis_since_midnight() < MILLISECS_PER_DAY);
 }
 

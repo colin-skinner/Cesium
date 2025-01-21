@@ -3,7 +3,7 @@
 
 #include "common/comms/PacketBroker.h"
 
-#include "common/comms/packets/ClockTask.h"
+#include "common/tasks/ClockTask.h"
 
 #include "common/comms/packet_schema.h"
 #include <vector>

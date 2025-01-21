@@ -6,17 +6,24 @@
 
 
 namespace Cesium {
+
+enum CommsInterface {
+    RADIO,
+    SERIAL_UART,
+    CAN_BUS
+};
+
 class SerialComms {
 
 private:
 
 public:
-
+    // TODO: figure out Radio, CAN, UART, etc.
     SerialComms();
-    static void emit(std::vector<uint8_t> vec);
-    static void emit(String str);
+    static void emit(std::vector<uint8_t> vec, CommsInterface interface);
+    static void emit(String str, CommsInterface interface);
 
-    static void emit_packet(BasePacket& packet);
+    static void emit_packet(BasePacket& packet, CommsInterface interface = SERIAL_UART);
 
     void process_uart();
 
