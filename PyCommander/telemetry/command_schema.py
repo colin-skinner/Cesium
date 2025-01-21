@@ -15,10 +15,13 @@ class Topic(Enum):
     IMU = 8
     BAROMETER = 9
     SHOCK_ACCEL = 10
-    GNC_NAVIGATION = 11
-    GNC_GUIDANCE = 12
-    GNC_CONTROL = 13
-    ACTUATORS = 14
+    
+    GNC_NAVIGATION = 20
+    GNC_GUIDANCE = 21
+    GNC_CONTROL = 22
+    ACTUATORS = 23
+    
+    TEST_ROCKET = 30
 
     BAD_TOPIC = -1
 

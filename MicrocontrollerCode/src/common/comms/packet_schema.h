@@ -10,14 +10,18 @@ enum class Topic {
     NETWORK = 4,
     FILESYSTEM = 5,
     SCHEDULER = 6,
+    
     GPS = 7,
     IMU = 8,
     BAROMETER = 9,
     SHOCK_ACCEL = 10,
-    GNC_NAVIGATION = 11,
-    GNC_GUIDANCE = 12,
-    GNC_CONTROL = 13,
-    ACTUATORS = 14,
+    DUCERS = 11,
+    THERMOCOUPLES = 12,
+
+    GNC_NAVIGATION = 20,
+    GNC_GUIDANCE = 21,
+    GNC_CONTROL = 22,
+    ACTUATORS = 23,
 
     TEST_ROCKETS = 30
 
