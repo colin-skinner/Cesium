@@ -21,10 +21,10 @@ Topic PacketBroker::route_packet(BasePacket &packet)
         ClockTask::route_packet(packet);
         break;
 
-    case Topic::TEST_ROCKETS:
-        DEBUG("Received Test Rocket Packet - ");
-        TestRocketTask::route_packet(packet);
-        break;
+    // case Topic::TEST_ROCKETS:
+    //     DEBUG("Received Test Rocket Packet - ");
+    //     TestRocketTask::route_packet(packet);
+    //     break;
 
 
     default:

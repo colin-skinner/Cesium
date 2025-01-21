@@ -11,7 +11,7 @@ bool WirelessNetwork::begin(const char* ssid, const char* password, bool connect
 
     if (connect) {
         wifi.begin(_ssid, _password);
-
+        
         uint16_t timeout = 10'000; //milliseconds
         uint64_t start = millis();
         while (wifi.status() != WL_CONNECTED && 
@@ -38,10 +38,10 @@ bool WirelessNetwork::begin(const char* ssid, const char* password, bool connect
 
 bool WirelessNetwork::end()
 {
-    bool success = wifi.disconnect(true);
-    success &= wifi.mode(WIFI_OFF);
+    RETURN_FALSE_IF_FALSE(wifi.disconnect(true));
+    RETURN_FALSE_IF_FALSE(wifi.mode(WIFI_OFF));
 
-    return success;
+    return true;
 }
 
 WirelessNetwork Network;

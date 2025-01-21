@@ -1,6 +1,6 @@
 #include "ClockTask.h"
 #include "SystemStatusTask.h"
-#include "../serial_comms.h"
+#include "../comms/serial_comms.h"
 
 using namespace std;
 
@@ -45,11 +45,6 @@ ClockCMD ClockTask::route_packet(BasePacket &packet)
 bool ClockTask::jump_clock_telem(BasePacket &packet)
 {
     vector<uint8_t> data = packet.get_data();
-
-    // OUTDATED
-    // uint32_t, uint8_t, uint8_t, uint8_t
-    // millis     day      month    year
-
 
     // uint8_t, uint8_t, uint16_t
     // day      month    year

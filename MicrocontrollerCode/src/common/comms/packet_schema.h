@@ -15,15 +15,15 @@ enum class Topic {
     IMU = 8,
     BAROMETER = 9,
     SHOCK_ACCEL = 10,
-    DUCERS = 11,
-    THERMOCOUPLES = 12,
+    // DUCERS = 11,
+    // THERMOCOUPLES = 12,
 
     GNC_NAVIGATION = 20,
     GNC_GUIDANCE = 21,
     GNC_CONTROL = 22,
     ACTUATORS = 23,
 
-    TEST_ROCKETS = 30
+    // TEST_ROCKETS = 30
 
 };
 
