@@ -1,8 +1,8 @@
 #include "SystemStatusTask.h"
-#include "../PacketBroker.h"
+#include "../comms/PacketBroker.h"
 
 
-#include "../serial_comms.h"
+#include "../comms/serial_comms.h"
 
 namespace Cesium {
 

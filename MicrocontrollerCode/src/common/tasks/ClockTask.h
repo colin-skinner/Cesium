@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../packet.h"
-#include "../packet_schema.h"
-#include "../../clock.h"
+#include "../comms/packet.h"
+#include "../comms/packet_schema.h"
+#include "../clock.h"
 
 namespace Cesium {
 
