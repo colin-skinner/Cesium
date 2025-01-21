@@ -6,7 +6,6 @@
 
 #include <Arduino.h>
 #include <LittleFS.h>
-
 namespace Cesium {
 
 class FileSystem {
@@ -16,26 +15,34 @@ public:
     FileSystem();
 
     bool begin(bool format_filesystem = false);
+    bool end();
     
-    bool listDir(const char *dirname);
+    std::vector<String> listDir(const char *dirname);
     void fileTree(const char *dirname);
-    bool createDir(const char *dirname);
-    bool removeDir(const char *dirname);
+    bool mkdir(const char *dirname);
+    bool rmdir(const char *dirname, bool recursive = false);
 
-    bool readFile(const char *path);
-    bool writeFile(const char *path, const char *message);
-    bool appendFile(const char *path, const char *message);
+    bool readFile(const char *path, String& result); // Prints to string
+    bool readFile(const char *path, Stream& stream); // Prints to a "Stream" object
+
+
+    bool writeFile(const char *path, const char *message); // String
+    bool writeFile(const char *path, const uint8_t *buffer, size_t len); // Buffer
+
+    bool appendFile(const char *path, const char *message); // String
+    bool appendFile(const char *path, const uint8_t *buffer, size_t len); // Buffer
     bool renameFile(const char *from_path, const char *to_path);
     bool deleteFile(const char *path);
 
     bool testFileIO(const char *path);
 
-    bool usageBytes(size_t total, size_t used);
+    bool usageBytes(size_t& total, size_t& used);
     float usageFraction() const;
 
 private:
     const char* partition_label = "spiffs";
     void fileTreeHelper(File root, uint8_t tabs = 0);
+    File current_file;
 };
 
 }

@@ -22,4 +22,6 @@
 
 #define RETURN_IF_FALSE(condition) if (condition == false) {return false;}
 
+#define DELETE_COPY_AND_ASSIGNMENT(Class) Class(const Class&) = delete; Class& operator=(const Class&) = delete;
+
 

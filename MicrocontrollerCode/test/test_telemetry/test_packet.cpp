@@ -248,7 +248,8 @@ void test_decode_header_set_stamp() {
 
     uint32_t millistamp;
     size_t topic, command, data_length;
-    BasePacket::decode_header(packet.get_header(), millistamp, topic, command, data_length);
+    vector<uint8_t> header = packet.get_header();
+    BasePacket::decode_header(header, millistamp, topic, command, data_length);
 
     TEST_ASSERT_EQUAL_UINT32(0x123456, millistamp);
     TEST_ASSERT_EQUAL_UINT32(expected_topic, topic);
@@ -268,7 +269,8 @@ void test_decode_header_random_stamp() {
 
     uint32_t millistamp;
     size_t topic, command, data_length;
-    BasePacket::decode_header(packet.get_header(), millistamp, topic, command, data_length);
+    vector<uint8_t> header = packet.get_header();
+    BasePacket::decode_header(header, millistamp, topic, command, data_length);
 
     TEST_ASSERT_EQUAL_UINT32(packet.get_millistamp(), millistamp);
     TEST_ASSERT_EQUAL_UINT32(expected_topic, topic);
@@ -514,11 +516,13 @@ void test_depacketize_with_cobs() {
 
     BasePacket packet;
 
+    vector<uint8_t> raw_bytes = {0x0D, 0x02, 0x46, 0x8A, 0xC0, 0x88, 0x04, 0x01, 0x02, 0x03, 0x04, 0x9C, 0x54};
+
     vector<uint8_t> decoded_packet = {0x02, 0x46, 0x8A, 0xC0, 0x88, 0x04, 0x01, 0x02, 0x03, 0x04, 0x9C, 0x54};
-    vector<uint8_t> packet_bytes = {0x0D, 0x02, 0x46, 0x8A, 0xC0, 0x88, 0x04, 0x01, 0x02, 0x03, 0x04, 0x9C, 0x54, 0x00};
+    
     vector<uint8_t> wrong_decoded_packet = {0x01, 0x46, 0x8A, 0xC0, 0x88, 0x04, 0x01, 0x02, 0x03, 0x04, 0x9C, 0x54};
 
-    TEST_ASSERT_EQUAL(BASE_PACKET_NO_ERR, BasePacket::depacketize(packet_bytes, packet));
+    TEST_ASSERT_EQUAL(BASE_PACKET_NO_ERR, BasePacket::depacketize(raw_bytes, packet));
     TEST_ASSERT_TRUE(packet.get_packet() == decoded_packet);
     TEST_ASSERT_FALSE(packet.get_packet() == wrong_decoded_packet);
 }

@@ -2,6 +2,8 @@
 #include "../globals.h"
 #include <esp_littlefs.h>
 
+using namespace std;
+
 namespace Cesium {
 
 FileSystem::FileSystem() {}
@@ -20,39 +22,56 @@ bool FileSystem::begin(bool format_filesystem)
     return true;
 }
 
-bool FileSystem::listDir(const char *dirname)
+bool FileSystem::end()
 {
+    return false;
+}
+
+vector<String> FileSystem::listDir(const char *dirname)
+{
+    vector<String> files;
     DEBUG("Listing directory: ");
     DEBUGLN(dirname);
 
+    // Opens up root
     File root = LittleFS.open(dirname);
     if (!root) {
         DEBUGLN(" - failed to open directory");
-        return false;
+        return vector<String>();
     }
     if (!root.isDirectory()) {
         DEBUGLN(" - not a directory");
-        return false;
+        return vector<String>();
     }
 
+    // Tries to open next file
     File file = root.openNextFile();
     while (file) {
+
+        
         if (file.isDirectory()) {
+            // If that file is a directory, just list it
             DEBUG("  DIR : ");
             DEBUGLN(file.name());
-        } else {
+            files.push_back((String)file.name());
+
+        } else { 
+            // If that file is a directory, list it AND the size
             DEBUG("  FILE: ");
             DEBUG(file.name());
             DEBUG("\tSIZE: ");
             DEBUGLN(file.size());
+
+            // "|" is a delimeter for size
+            files.push_back((String)file.name() + "|" + (String)file.size());
         }
         file = root.openNextFile();
     }
 
-    return true;
+    return files;
 }
 
-bool FileSystem::createDir(const char *dirname)
+bool FileSystem::mkdir(const char *dirname)
 {
     DEBUG("Creating directory: ");
     DEBUGLN(dirname);
@@ -98,11 +117,53 @@ void FileSystem::fileTreeHelper(File root, uint8_t tabs) {
     }
 }
 
-bool FileSystem::removeDir(const char *dirname)
+bool FileSystem::rmdir(const char *dirname, bool recursive)
 {
     DEBUG("Removing directory: ");
     DEBUGLN(dirname);
 
+    // Returns if directory is not empty and not recursive
+    if (listDir(dirname).size() > 0 && !recursive) {
+        DEBUGLN("Directory \"" + (String)dirname + "\" is not empty, and function is non-recursive");
+        return false;
+    }
+
+    // Sees if directory exists
+    File current_dir = LittleFS.open(dirname);
+    if (!current_dir) {
+        DEBUGLN(" - failed to open directory");
+        return false;
+    }
+    if (!current_dir.isDirectory()) {
+        DEBUGLN(" - not a directory");
+        return false;
+    }
+    
+
+    // If recursive 
+    if (recursive) {
+
+        // Tries to open next file
+        File file = current_dir.openNextFile();
+        while (file) {
+            
+            String new_filename = (String)dirname + "/" + file.name();
+            
+            if (file.isDirectory()) {
+                rmdir(new_filename.c_str(), true);
+
+            } else { 
+                file.close();
+                deleteFile(new_filename.c_str());
+            }
+            file = current_dir.openNextFile();
+        }
+
+        
+    }
+
+
+    // Finally deletes the directory
     if (LittleFS.rmdir(dirname)) {
         DEBUGLN(" - Dir removed");
         return true;
@@ -112,10 +173,12 @@ bool FileSystem::removeDir(const char *dirname)
     }
 }
 
-bool FileSystem::readFile(const char *path)
+bool FileSystem::readFile(const char *path, String& result)
 {
     DEBUG("Reading file: ");
     DEBUGLN(path);
+
+    result = "";
 
     File file = LittleFS.open(path);
     if (!file || file.isDirectory()) {
@@ -123,9 +186,29 @@ bool FileSystem::readFile(const char *path)
         return false;
     }
 
-    DEBUGLN(" - read from file:");
     while (file.available()) {
-        Serial.write(file.read());
+        result += (char)file.read();
+    }
+    file.close();
+
+    return true;
+}
+
+bool FileSystem::readFile(const char *path, Stream& stream)
+{
+    DEBUG("Reading file: ");
+    DEBUGLN(path);
+
+    String file_contents;
+
+    File file = LittleFS.open(path);
+    if (!file || file.isDirectory()) {
+        DEBUGLN(" - failed to open file for reading");
+        return false;
+    }
+
+    while (file.available()) {
+        stream.write(file.read());
     }
     file.close();
 
@@ -156,6 +239,30 @@ bool FileSystem::writeFile(const char *path, const char *message)
     }
 }
 
+bool FileSystem::writeFile(const char *path, const uint8_t *buffer, size_t len)
+{
+    DEBUG("Writing to file: ");
+    DEBUGLN(path);
+
+    File file;
+    
+    file = LittleFS.open(path, FILE_WRITE);
+    
+    if (!file) {
+        DEBUGLN(" - failed to open file for writing");
+        return false;
+    }
+    if (file.write(buffer, len)) {
+        DEBUGLN(" - file written");
+        file.close();
+        return true;
+    } else {
+        DEBUGLN(" - write failed");
+        file.close();
+        return false;
+    }
+}
+
 bool FileSystem::appendFile(const char *path, const char *message)
 {
     DEBUG("Appending to file: ");
@@ -170,6 +277,30 @@ bool FileSystem::appendFile(const char *path, const char *message)
         return false;
     }
     if (file.print(message)) {
+        DEBUGLN(" - file appended");
+        file.close();
+        return true;
+    } else {
+        DEBUGLN(" - append failed");
+        file.close();
+        return false;
+    }
+}
+
+bool FileSystem::appendFile(const char *path, const uint8_t *buffer, size_t len)
+{
+    DEBUG("Appending to file: ");
+    DEBUGLN(path);
+
+    File file;
+    
+    file = LittleFS.open(path, FILE_APPEND);
+    
+    if (!file) {
+        DEBUGLN(" - failed to open file for appending");
+        return false;
+    }
+    if (file.write(buffer, len)) {
         DEBUGLN(" - file appended");
         file.close();
         return true;
@@ -281,11 +412,11 @@ bool FileSystem::testFileIO(const char *path)
     return true;
 }
 
-bool FileSystem::usageBytes(size_t total, size_t used) {
+bool FileSystem::usageBytes(size_t& total, size_t& used) {
 
     Serial.println(LittleFS.totalBytes());
     Serial.println(LittleFS.usedBytes());
-    if(esp_littlefs_info(partition_label, &total, &used)){
+    if(esp_littlefs_info(partition_label, &total, &used) != ESP_OK){
         return false;
     }
 
