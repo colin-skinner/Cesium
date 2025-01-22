@@ -27,7 +27,33 @@ Matrix<T, col, row> transpose(const Matrix<T, row, col>& mat) {
     return result;
 }
 
+// Overload float matrix equality
+template <size_t row, size_t col>
+bool matrix_float_equals(const Matrix<float, row, col>& mat1, const Matrix<float, row, col>& mat2) {
 
+    for (size_t i = 0; i < row; i++) {
+        for (size_t j = 0; j < col; j++) {
+            if (abs(mat1[i][j] - mat2[i][j]) > 1e-12) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// Overload float matrix equality
+template <size_t row, size_t col>
+bool matrix_int_equals(const Matrix<int, row, col>& mat1, const Matrix<int, row, col>& mat2) {
+
+    for (size_t i = 0; i < row; i++) {
+        for (size_t j = 0; j < col; j++) {
+            if (mat1[i][j] != mat2[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 // Overload operator* for matrix multiplication
 template <typename T, size_t row_f, size_t dim_int, size_t col_f>

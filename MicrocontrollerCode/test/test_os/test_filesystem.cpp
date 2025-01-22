@@ -2,7 +2,6 @@
 #include <Arduino.h>
 
 #include "common/os/filesystem.h"
-#include <vector>
 
 
 using namespace std;

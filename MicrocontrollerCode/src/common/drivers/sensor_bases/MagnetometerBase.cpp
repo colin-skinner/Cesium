@@ -1,19 +1,17 @@
-#include "AccelerometerBase.h"
+#include "MagnetometerBase.h"
 
 namespace Cesium {
 namespace Sensor {
 
 
-AccelerometerBase::AccelerometerBase()
-    : accel_mps{}
-    , accel_body_mps{}
+MagnetometerBase::MagnetometerBase()
+    : B_uT{}
+    , B_body_uT{}
 {}
 
-AccelerometerBase::~AccelerometerBase()
-{
-}
+MagnetometerBase::~MagnetometerBase() {}
 
-bool AccelerometerBase::read()
+bool MagnetometerBase::read()
 {
     // Sets last_read_time_ms; TODO: figure out if it is faster to just write it out
     return SensorBase::read();

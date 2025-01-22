@@ -1,19 +1,17 @@
-#include "AccelerometerBase.h"
+#include "GyroscopeBase.h"
 
 namespace Cesium {
 namespace Sensor {
 
 
-AccelerometerBase::AccelerometerBase()
-    : accel_mps{}
-    , accel_body_mps{}
+GyroscopeBase::GyroscopeBase()
+    : w_rps{}
+    , w_body_rps{}
 {}
 
-AccelerometerBase::~AccelerometerBase()
-{
-}
+GyroscopeBase::~GyroscopeBase() {}
 
-bool AccelerometerBase::read()
+bool GyroscopeBase::read()
 {
     // Sets last_read_time_ms; TODO: figure out if it is faster to just write it out
     return SensorBase::read();

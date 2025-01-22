@@ -1,25 +1,34 @@
 #include "icm20948.h"
 #include "../globals.h"
-
+#include <fstream>
 namespace Cesium {
-
-Icm20948::Icm20948()
+namespace Sensor {
+Icm20948::Icm20948() 
+    : temp_C{0}
+    , accel_factor{}
+    , gyro_factor{}
+    , mag_factor{}
+    , cs_pin{0}
 {
-    this->spi_instance_ptr = &SPI;
-    this->cs_pin = 0;
+    _spi_instance = &SPI;
 }
 
 Icm20948::Icm20948(uint8_t cs_pin, SPIClass* spi_instance)
 {
-    this->spi_instance_ptr = spi_instance;
+    _spi_instance = spi_instance;
     this->cs_pin = cs_pin;
+}
+
+bool Icm20948::configure(const char *relative_filename)
+{
+    return false;
 }
 
 bool Icm20948::setup()
 {
     bool setup = false;
     for (int i=0; i<3000; i++) {
-        if(device.begin_SPI(cs_pin, spi_instance_ptr)) {
+        if(device.begin_SPI(cs_pin, _spi_instance)) {
             DEBUGLN("found!");
             setup = true;
             break;
@@ -92,39 +101,48 @@ bool Icm20948::setup()
 
 bool Icm20948::read()
 {
+    SensorBase::read();
+
     /* Get a new normalized sensor event */
-    sensors_event_t accel_event;
-    sensors_event_t gyro_event;
-    sensors_event_t temp_event;
-    sensors_event_t mag_event;
     device.getEvent(&accel_event, &gyro_event, &temp_event, &mag_event);
 
-    this->temp = temp_event.temperature;
-    this->accel = accel_event.acceleration;
-    this->gyro = gyro_event.gyro;
-    this->B_field = mag_event.magnetic;
+    // If this doesn't work, just put "12" for the size
+    memcpy( (void*) &accel_mps, (void*) &accel_event.acceleration, sizeof(accel_mps)); // Copies as g's
+    memcpy( (void*) &w_rps, (void*) &gyro_event.gyro, sizeof(w_rps)); // Copies as deg/s
+    memcpy( (void*) &temp_C, (void*) &temp_event.temperature, sizeof(temp_C)); // Copies as degC
+    memcpy( (void*) &B_uT, (void*) &mag_event.magnetic, sizeof(B_uT)); // Copies as uT
+
     
     DEBUG("Temp:");
-    DEBUG(temp);
-    DEBUG("*C, ");
+    DEBUG(temp_C);
+    DEBUG("degC, ");
 
 
     DEBUG("\t\tAccel X: ");
-    DEBUG(accel.x);
+    DEBUG(accel_mps[0][0]);
     DEBUG(", Y: ");
-    DEBUG(accel.y);
+    DEBUG(accel_mps[1][0]);
     DEBUG(", Z: ");
-    DEBUG(accel.z);
-    DEBUG(" m/s^2, ");
+    DEBUG(accel_mps[2][0]);
+    DEBUG(" g, ");
 
     DEBUG("\t\tGyro X: ");
-    DEBUG(gyro.x);
+    DEBUG(w_rps[0][0]);
     DEBUG(", Y: ");
-    DEBUG(gyro.y);
+    DEBUG(w_rps[1][0]);
     DEBUG(", Z: ");
-    DEBUG(gyro.z);
-    DEBUGLN(" radians/s");
+    DEBUG(w_rps[2][0]);
+    DEBUGLN(" deg/s, ");
+
+    DEBUG("\t\tMag X: ");
+    DEBUG(B_uT[0][0]);
+    DEBUG(", Y: ");
+    DEBUG(B_uT[1][0]);
+    DEBUG(", Z: ");
+    DEBUG(B_uT[2][0]);
+    DEBUGLN(" uT");
     return false;
 }
 
+}
 }

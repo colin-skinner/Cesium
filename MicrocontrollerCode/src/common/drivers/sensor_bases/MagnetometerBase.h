@@ -5,17 +5,16 @@
 
 namespace Cesium {
 namespace Sensor {
-class AccelerometerBase : virtual public SensorBase {
+class MagnetometerBase : virtual public SensorBase {
 
 protected:
-    Vector3<float> accel_mps;
-    Vector3<float> accel_body_mps;
-
+    Vector3<float> B_uT;
+    Vector3<float> B_body_uT;
 
 public:
 
-    AccelerometerBase();
-    virtual ~AccelerometerBase();
+    MagnetometerBase();
+    virtual ~MagnetometerBase() = 0;
 
     virtual bool read(); 
 };

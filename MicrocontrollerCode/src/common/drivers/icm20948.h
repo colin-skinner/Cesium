@@ -9,34 +9,45 @@
 #include <SPI.h>
 #include "../math/vector.h"
 
-namespace Cesium {
+#include "sensor_bases/AccelerometerBase.h"
+#include "sensor_bases/GyroscopeBase.h"
+#include "sensor_bases/MagnetometerBase.h"
 
-class Icm20948 {
+namespace Cesium {
+namespace Sensor {
+
+class Icm20948 : public AccelerometerBase, public GyroscopeBase, public MagnetometerBase {
 private:
     Adafruit_ICM20948 device;
-    float offset[3];
-    uint32_t last_read_ms = 0;
+
+    // TODO: add calibration stuff
+    Vector3<float> accel_factor[3];
+    Vector3<float> gyro_factor[3];
+    Vector3<float> mag_factor[3];
 
     uint8_t cs_pin;
-    SPIClass* spi_instance_ptr;
+
+    // To make them class-wide
+    sensors_event_t accel_event;
+    sensors_event_t gyro_event;
+    sensors_event_t temp_event;
+    sensors_event_t mag_event;
     
 
 public:
 
     Icm20948();
     Icm20948(uint8_t cs_pin, SPIClass* spi_instance);
+    
+    bool configure(const char* relative_filename);
     bool setup();
     bool read();
 
-    float temp;
-    // Vector3<float> accel;
-    // Vector3<float> gyro;
-    // Vector3<float> B_field;
-    
+    float temp_C;  
 
-    sensors_vec_t accel;
-    sensors_vec_t gyro;
-    sensors_vec_t B_field;
 };
 
+
+
+} // namespace Sensor
 } // namespace Cesium

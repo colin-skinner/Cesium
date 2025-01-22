@@ -1,19 +1,15 @@
-#include "AccelerometerBase.h"
+#include "BarometerBase.h"
 
 namespace Cesium {
 namespace Sensor {
 
 
-AccelerometerBase::AccelerometerBase()
-    : accel_mps{}
-    , accel_body_mps{}
+BarometerBase::BarometerBase()
+    : altitude_m{}
+    , pressure_kPa{}
 {}
 
-AccelerometerBase::~AccelerometerBase()
-{
-}
-
-bool AccelerometerBase::read()
+bool BarometerBase::read()
 {
     // Sets last_read_time_ms; TODO: figure out if it is faster to just write it out
     return SensorBase::read();
