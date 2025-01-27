@@ -1,4 +1,4 @@
-#include "spx1276.h"
+#include "Spx1276.h"
 #include "../globals.h"
 
 namespace Cesium {

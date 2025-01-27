@@ -30,6 +30,9 @@ protected:
     Interfaces interface;
 
     Matrix3<float> body_to_sensor;
+
+    // TODO: add temperature
+    float temp_C;
     
 public:
     SensorBase();
@@ -40,7 +43,7 @@ public:
     void attach_serial(HardwareSerial* serial);
 
 
-    virtual bool configure(const char* relative_filename) = 0;
+    virtual bool configure(const char* config_name) = 0;
     virtual bool setup() = 0;
     virtual bool read(); 
     virtual void attach_int_pin(uint8_t pin, void (*func)(), uint8_t mode = ONHIGH);

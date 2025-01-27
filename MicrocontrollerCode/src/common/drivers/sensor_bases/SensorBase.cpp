@@ -11,6 +11,7 @@ SensorBase::SensorBase()
     , _serial_instance{nullptr}
     , interface{Interfaces::NOT_SET}
     , body_to_sensor{}
+    , temp_C{NAN}
 {}
 
 SensorBase::~SensorBase() {}

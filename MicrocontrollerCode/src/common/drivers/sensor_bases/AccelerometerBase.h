@@ -18,6 +18,9 @@ public:
     virtual ~AccelerometerBase();
 
     virtual bool read(); 
+
+    const Vector3<float>& get_accel_mps() {return accel_mps;}
+    const Vector3<float>& get_accel_body_mps() {return accel_body_mps;}
 };
 
 

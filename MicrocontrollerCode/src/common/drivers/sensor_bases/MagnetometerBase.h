@@ -17,6 +17,9 @@ public:
     virtual ~MagnetometerBase() = 0;
 
     virtual bool read(); 
+
+    const Vector3<float>& get_B_uT() {return B_uT;};
+    const Vector3<float>& get_B_body_uT() {return B_body_uT;};
 };
 
 

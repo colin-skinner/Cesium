@@ -9,7 +9,7 @@
 namespace Cesium {
 
 class FileSystem {
-
+// TODO: Make files sectionable and able to be downlinked
 public:
 
     FileSystem();

@@ -15,6 +15,12 @@
 #define DEBUGLN(val)
 #endif
 
+enum class Frame {
+    Sensor,
+    Body,
+    Launch,
+    Earth
+};
 
 #define RETURN_FALSE_IF_FALSE(condition) if (!(condition)) {return false;}
 

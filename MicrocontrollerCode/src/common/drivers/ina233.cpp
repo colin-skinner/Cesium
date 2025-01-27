@@ -1,7 +1,8 @@
-#include "ina233.h"
+#include "Ina233.h"
 #include "../globals.h"
 
 namespace Cesium {
+namespace Sensor {
     
 Ina233::Ina233(uint8_t ina_addr) : addr(ina_addr) {}
 
@@ -25,4 +26,5 @@ bool Ina233::read()
     return true;
 }
 
+}
 }

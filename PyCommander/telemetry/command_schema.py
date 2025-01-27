@@ -70,7 +70,6 @@ class FilesystemCMD(Enum):
     READ_FILE = 2
     DELETE_FILE = 3 # Includes directories
     FILESYSTEM_STATS = 4
-    SUCCESS = 15
 
 class SchedulerCMD(Enum):
     NotImplemented

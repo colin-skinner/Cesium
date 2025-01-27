@@ -1,104 +1,105 @@
 
 #include <Arduino.h>
-#include "common/os/filesystem.h"
+// #include "common/drivers/sensor_bases/SensorBase.h"
+#include "common/drivers/Icm20948.h"
+#include <SPI.h>
 #include "common/globals.h"
-
-#define FORMAT_LITTLEFS_IF_FAILED true
+#include "common/math/vector.h"
+#include "config/ConfigReader.h"
 
 using namespace Cesium;
 using namespace std;
-
+using namespace Sensor;
 #define LED 2
 
-FileSystem filesystem;
+#define HSCK 14
+#define HMISO 36
+#define HMOSI 13
+#define IMU_CS 33
+
+Icm20948 sensor(IMU_CS, &SPI);
+
+
+const char vectors[] = R"(
+{
+    "good_vector" : [
+        [1],
+        [2],
+        [3]
+    ],
+    "bad_col_size" : [
+        [1,2],
+        [2],
+        [3]
+    ],
+    "row_mismatch" : [
+        [1],
+        [2]
+    ],
+    "bad_datatype" : [
+        ["wow"],
+        [2],
+        [3]
+    ]
+
+}
+)";
 
 void setup() {
+    
     Serial.begin(115200);
+    SPI.begin(HSCK, HMISO, HMOSI, IMU_CS);
 
-    filesystem.begin(true);
+    sensor.setup();
 
-    filesystem.listDir("/");
+    JsonDocument doc;
+    File::json_open(vectors, doc);
 
-    size_t total, size;
-    filesystem.usageBytes(total, size);
-    Serial.println(total);
-    Serial.println(size);
-
-    static uint8_t buf[512];
-    for (int i = 0; i < 2048; i++) {
-        if ((i & 0x001F) == 0x001F) {
-            Serial.print(".");
-        }
-        filesystem.writeFile("/wow.txt", buf, 512);
-    }
-    
-    filesystem.usageBytes(total, size);
-    Serial.println(total);
-    Serial.println(size);
-
-    // filesystem.writeFile("/wow2.txt", "hahahaha");
-    // filesystem.usageBytes(total, size);
-
-    filesystem.deleteFile("/wow.txt");
-    filesystem.usageBytes(total, size);
-    Serial.println(total);
-    Serial.println(size);
-
-    filesystem.end();
-
-
-    // filesystem.deleteFile("/wow2.txt");
-    // filesystem.usageBytes(total, size);
-
-
-
-    // filesystem.deleteFile("/test/wow.txt");
-
-    // filesystem.rmdir("/test", true);
-    // filesystem.mkdir("/test");
-
-    // filesystem.writeFile("/test/wow.txt", "ha");
-
-    // filesystem.listDir("/test");
-
-    // filesystem.deleteFile("/test/wow.txt");
-
-    // filesystem.listDir("/test");
-
-    // Serial.println("--------------");
-
-    // filesystem.rmdir("/test", true);
-    // filesystem.mkdir("/test");
-    
-    // filesystem.mkdir("/test/new_folder");
-    // filesystem.writeFile("/test/new_folder/hello.txt","Hello!"); 
-    // filesystem.mkdir("/test/new_folder/folder_2"); 
-    // filesystem.writeFile("/test/new_folder/folder_2/hello.txt","Hello!"); 
-
-    // Serial.println(filesystem.rmdir("/test", true));
-
-    // filesystem.mkdir("/test");
-    // auto files = filesystem.listDir("/test");
-    // Serial.println(files.size());
+    Vector3<int> test_int_vec;
+    Vector3<float> test_float_vec;
+    Vector3<int> expected = {{
+        {1},
+        {2},
+        {3}
+    }};
+    Vector3<float> expected_float = {{
+        {1.0},
+        {2.0},
+        {3.0}
+    }};
+    Serial.println(1);
+    Serial.println("Good" + (String)File::json_extract<int,3,1>(doc, "good_vector", test_int_vec));
+    Serial.println(2);
+    Serial.println("Good" + (String)File::json_extract<float,3,1>(doc, "good_vector", test_float_vec));
+    Serial.println(3);
+    Serial.println(matrix_int_equals(expected, test_int_vec));
+    Serial.println(4);
+    Serial.println(matrix_float_equals(expected_float, test_float_vec));
 
 }
 
 void loop() {
-    // filesystem.createDir("/mydir"); // Create a mydir folder
-    // filesystem.writeFile("/mydir/hello1.txt", "Hello1"); // Create a hello1.txt file with the content "Hello1"
-    ; // List the directories up to one level beginning at the root directory
 
-    
-    // filesystem.deleteFile("/mydir/hello1.txt"); //delete the previously created file
-    // filesystem.removeDir("/mydir"); //delete the previously created folder
-    // filesystem.listDir("/", 1); // list all directories to make sure they were deleted
-        
-    // filesystem.writeFile("/hello.txt", "Hello "); //Create and write a new file in the root directory
-    // filesystem.appendFile("/hello.txt", "World!\r\n"); //Append some text to the previous file
-    // filesystem.readFile("/hello.txt"); // Read the complete file
-    // filesystem.renameFile("/hello.txt", "/foo.txt"); //Rename the previous file
-    // filesystem.readFile("/foo.txt"); //Read the file with the new name
-    // filesystem.deleteFile("/foo.txt"); //Delete the file
-    // filesystem.testFileIO("/test.txt"); //Testin
-    // filesystem.deleteFile("/test.txt"); //Delete the file
+    sensor.read();
+
+    // Vector3<float> accel = sensor.get_accel_mps();
+    // Vector3<float> gyro = sensor.get_w_rps();
+
+    // Serial.print("Accel: " + String(norm(accel)));
+    // Serial.print("\t\tValues: ");
+    // for (auto i : accel) {
+    //     Serial.print(i[0]);
+    //     Serial.print("\t");
+    // }
+
+    // Serial.print("Norm: " + String(norm(gyro)));
+    // Serial.print("\t\tGyro: ");
+    // for (auto i : gyro) {
+    //     Serial.print(i[0]);
+    //     Serial.print("\t");
+    // }
+
+    // Serial.println();
+    delay(10);
+
 }

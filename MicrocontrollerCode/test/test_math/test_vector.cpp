@@ -12,14 +12,14 @@ using namespace std;
 
 void test_zero_vector() {
     const int ROWS = 4;
-    VectorN<int, ROWS> zero_matrix = {{
+    Vector<int, ROWS> zero_matrix = {{
         {0},
         {0},
         {0},
         {0}
     }};
 
-    VectorN<int, ROWS> test_matrix{};
+    Vector<int, ROWS> test_matrix{};
 
     for (int row = 0; row < ROWS; row++) {
         TEST_ASSERT_EQUAL_INT(zero_matrix[row][0], test_matrix[row][0]);
@@ -33,13 +33,13 @@ void test_zero_vector() {
 void test_vector_float_equality() {
     const int ROWS = 3;
 
-    VectorN<float, ROWS> vec1 = {{
+    Vector<float, ROWS> vec1 = {{
         {1.0},
         {3.0},
         {2.0}
     }};
 
-    VectorN<float, ROWS> vec2 = {{
+    Vector<float, ROWS> vec2 = {{
         {1.0},
         {3.0},
         {2.0}
@@ -53,13 +53,13 @@ void test_vector_float_equality_edge_cases() {
 
     const int ROWS = 3;
 
-    VectorN<float, ROWS> vec1 = {{
+    Vector<float, ROWS> vec1 = {{
         {1.0},
         {3.0},
         {2.0}
     }};
 
-    VectorN<float, ROWS> vec2 = {{
+    Vector<float, ROWS> vec2 = {{
         {1.0},
         {3.0},
         {2.1}
@@ -80,13 +80,13 @@ void test_vector_float_equality_edge_cases() {
 
 void test_vector_int_equality() {
     const int ROWS = 3;
-    VectorN<int, ROWS> vec1 = {{
+    Vector<int, ROWS> vec1 = {{
         {1},
         {2},
         {5}
     }};
 
-    VectorN<int, ROWS> vec2 = {{
+    Vector<int, ROWS> vec2 = {{
         {1},
         {2},
         {5}
@@ -121,7 +121,7 @@ void test_vector_int_equality_edge_cases() {
 void test_vector_dot_int() {
     const int ROWS = 7;
 
-    VectorN<int, ROWS> vec1 = {{
+    Vector<int, ROWS> vec1 = {{
         {2},
         {3},
         {1},
@@ -131,7 +131,7 @@ void test_vector_dot_int() {
         {9},
     }};
 
-    VectorN<int, ROWS> result1 = {{
+    Vector<int, ROWS> result1 = {{
         {4},
         {9},
         {1},
@@ -153,7 +153,7 @@ void test_vector_dot_int() {
 void test_vector_dot_int_edge_cases() {
     const int ROWS = 7;
 
-    VectorN<int, ROWS> vec1 = {{
+    Vector<int, ROWS> vec1 = {{
         {2},
         {4},
         {1},
@@ -163,7 +163,7 @@ void test_vector_dot_int_edge_cases() {
         {9},
     }};
 
-    VectorN<int, ROWS> result1 = {{
+    Vector<int, ROWS> result1 = {{
         {4},
         {6},
         {2},
@@ -185,7 +185,7 @@ void test_vector_dot_int_edge_cases() {
 void test_vector_dot_float() {
     const int ROWS = 7;
 
-    VectorN<float, ROWS> vec1 = {{
+    Vector<float, ROWS> vec1 = {{
         {2},
         {3},
         {1},
@@ -195,7 +195,7 @@ void test_vector_dot_float() {
         {9},
     }};
 
-    VectorN<float, ROWS> result1 = {{
+    Vector<float, ROWS> result1 = {{
         {4},
         {9},
         {1},
@@ -217,7 +217,7 @@ void test_vector_dot_float() {
 void test_vector_dot_float_edge_cases() {
     const int ROWS = 7;
 
-    VectorN<float, ROWS> vec1 = {{
+    Vector<float, ROWS> vec1 = {{
         {2},
         {4},
         {1},
@@ -227,7 +227,7 @@ void test_vector_dot_float_edge_cases() {
         {9},
     }};
 
-    VectorN<float, ROWS> result1 = {{
+    Vector<float, ROWS> result1 = {{
         {4},
         {6},
         {2},

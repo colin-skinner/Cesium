@@ -9,6 +9,7 @@
 
 
 namespace Cesium {
+namespace Sensor {
 
 class Ina233 {
 private:
@@ -44,4 +45,5 @@ public:
 
 };
 
+} // namespace Sensor
 } // namespace Cesium

@@ -3,36 +3,48 @@
 #include "common/comms/packet.h"
 #include "common/comms/serial_comms.h"
 #include "common/globals.h"
-#include <vector>
-#include <string>
-#include "common/tasks/SystemStatusTask.h"
-
-/* You only need to format LittleFS the first time you run a
-   test or else use the LITTLEFS plugin to create a partition
-   https://github.com/lorol/arduino-esp32littlefs-plugin
-
-   If you test two partitions, you need to use a custom
-   partition.csv file, see in the sketch folder */
-
-//#define TWOPART
-
-#define FORMAT_LITTLEFS_IF_FAILED true
-
+#include "common/drivers/Icm20948.h"
+#include "common/telem_tasks/ImuTask.h"
+// using namespace Cesium::Config;
+// using namespace Cesium::File;
 using namespace Cesium;
 using namespace std;
 
 #define LED 2
 
+#define HSCK 14
+#define HMISO 36
+#define HMOSI 13
+#define IMU_CS 33
+
 SerialComms comms;
+
+Sensor::Icm20948 sensor(IMU_CS, &SPI);
 
 void setup() {
     Serial.begin(115200);
-    pinMode(LED, OUTPUT);
 
+    SPI.begin(HSCK, HMISO, HMOSI, IMU_CS);
+
+    sensor.setup();
+
+    ImuTask::add_accel(&sensor);
+    ImuTask::add_gyro(&sensor);
+    ImuTask::add_mag(&sensor);
+
+
+    // for (auto row : yes) {
+    //     for (auto val : row) {
+    //         Serial.print(String(val) + " ");
+    //     }
+    //     Serial.print("\n");
+    // }
 }
 
 void loop() {
 
+    // Serial.println(100);
+    // delay(1000);
     if (Serial.available()) {
         uint32_t time = millis();
         digitalWrite(LED, HIGH);
@@ -43,10 +55,5 @@ void loop() {
         digitalWrite(LED, LOW);
     }
     delay(10);
-
-    // digitalWrite(LED, HIGH);
-    // SystemStatusTask::send_ack();
-    // digitalWrite(LED, LOW);
-    // delay(1000);
 
 }

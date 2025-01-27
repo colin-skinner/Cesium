@@ -17,6 +17,9 @@ public:
     virtual ~GyroscopeBase() = 0;
 
     virtual bool read(); 
+
+    const Vector3<float>& get_w_rps() {return w_rps;}
+    const Vector3<float>& get_w_body_rps() {return w_body_rps;}
 };
 
 

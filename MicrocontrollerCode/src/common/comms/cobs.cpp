@@ -11,9 +11,11 @@
 // User includes
 #include "cobs.h"
 
+using namespace std;
+
 namespace Cesium {
 
-bool CobsTranscoder::Encode(const ByteArray &rawData, ByteArray &encodedData) {
+bool CobsTranscoder::Encode(const vector<uint8_t> &rawData, vector<uint8_t> &encodedData) {
 
     int startOfCurrBlock = 0;
     uint8_t numElementsInCurrBlock = 0;
@@ -68,7 +70,7 @@ bool CobsTranscoder::Encode(const ByteArray &rawData, ByteArray &encodedData) {
     return true;
 }
 
-bool CobsTranscoder::Decode(const ByteArray &encodedData, ByteArray &decodedData) {
+bool CobsTranscoder::Decode(const vector<uint8_t> &encodedData, vector<uint8_t> &decodedData) {
 
     decodedData.clear();
 

@@ -30,8 +30,6 @@
 * Read in data length
 * Validate CRC
 
-
-
 # Command Codes (loose list)
 - System Status
     - Request ACK (RACK)
@@ -99,3 +97,9 @@
     - Status (commanded states, actual states, current)
     - Command actuators
     - 
+
+
+# Colors
+- Green: Acks
+- Blue: Telemetry
+- Red: NACK

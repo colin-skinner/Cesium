@@ -1,11 +1,12 @@
-#include "icm20948.h"
+#include "Icm20948.h"
 #include "../globals.h"
 #include <fstream>
+
 namespace Cesium {
 namespace Sensor {
 Icm20948::Icm20948() 
-    : temp_C{0}
-    , accel_factor{}
+    :  //temp_C{0}
+     accel_factor{}
     , gyro_factor{}
     , mag_factor{}
     , cs_pin{0}
@@ -19,7 +20,7 @@ Icm20948::Icm20948(uint8_t cs_pin, SPIClass* spi_instance)
     this->cs_pin = cs_pin;
 }
 
-bool Icm20948::configure(const char *relative_filename)
+bool Icm20948::configure(const char* config_name)
 {
     return false;
 }
@@ -107,10 +108,10 @@ bool Icm20948::read()
     device.getEvent(&accel_event, &gyro_event, &temp_event, &mag_event);
 
     // If this doesn't work, just put "12" for the size
-    memcpy( (void*) &accel_mps, (void*) &accel_event.acceleration, sizeof(accel_mps)); // Copies as g's
-    memcpy( (void*) &w_rps, (void*) &gyro_event.gyro, sizeof(w_rps)); // Copies as deg/s
-    memcpy( (void*) &temp_C, (void*) &temp_event.temperature, sizeof(temp_C)); // Copies as degC
-    memcpy( (void*) &B_uT, (void*) &mag_event.magnetic, sizeof(B_uT)); // Copies as uT
+    memcpy(  &accel_mps,  &accel_event.acceleration, sizeof(accel_mps)); // Copies as g's
+    memcpy(  &w_rps,  &gyro_event.gyro, sizeof(w_rps)); // Copies as deg/s
+    memcpy(  &temp_C,  &temp_event.temperature, sizeof(temp_C)); // Copies as degC
+    memcpy(  &B_uT,  &mag_event.magnetic, sizeof(B_uT)); // Copies as uT
 
     
     DEBUG("Temp:");

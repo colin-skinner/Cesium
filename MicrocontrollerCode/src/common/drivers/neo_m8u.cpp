@@ -1,4 +1,4 @@
-#include "neo_m8u.h"
+#include "Neo_m8u.h"
 #include "../globals.h"
 namespace Cesium {
 NeoM8U::NeoM8U(uint8_t cs_pin, SPIClass* spi_instance)

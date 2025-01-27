@@ -39,11 +39,9 @@ public:
     Icm20948();
     Icm20948(uint8_t cs_pin, SPIClass* spi_instance);
     
-    bool configure(const char* relative_filename);
+    bool configure(const char* config_name);
     bool setup();
     bool read();
-
-    float temp_C;  
 
 };
 

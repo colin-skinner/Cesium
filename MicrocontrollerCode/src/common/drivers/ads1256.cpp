@@ -1,4 +1,4 @@
-#include "ads1256.h"
+#include "Ads1256.h"
 #include "../globals.h"
 
 namespace Cesium {

@@ -1,7 +1,8 @@
 #include "PacketBroker.h"
 
-#include "../tasks/SystemStatusTask.h"
-#include "../tasks/ClockTask.h"
+#include "../telem_tasks/SystemStatusTask.h"
+#include "../telem_tasks/ClockTask.h"
+#include "../telem_tasks/ImuTask.h"
 
 namespace Cesium {
 
@@ -19,6 +20,11 @@ Topic PacketBroker::route_packet(BasePacket &packet)
     case Topic::CLOCK:
         DEBUG("Received Clock Packet - ");
         ClockTask::route_packet(packet);
+        break;
+
+    case Topic::IMU:
+        DEBUG("Received IMU Packet - ");
+        ImuTask::route_packet(packet);
         break;
 
     // case Topic::TEST_ROCKETS:

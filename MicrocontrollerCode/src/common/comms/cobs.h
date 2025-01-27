@@ -14,7 +14,6 @@
 #include <Arduino.h>
 
 // Local includes
-using ByteArray = std::vector<uint8_t>;
 
 namespace Cesium {
 class CobsTranscoder {
@@ -28,14 +27,14 @@ public:
 
     /// \details    The encoding process cannot fail.
     static bool Encode(
-            const ByteArray &rawData,
-            ByteArray &encodedData);
+            const std::vector<uint8_t> &rawData,
+            std::vector<uint8_t> &encodedData);
 
     /// \brief      Decode data using "Consistent Overhead Byte Stuffing" (COBS).
     /// \details    Provided encodedData is expected to be a single, valid COBS encoded packet. If not, method
     ///             will return #DecodeStatus::ERROR_ZERO_BYTE_NOT_EXPECTED.
     ///             #decodedData is emptied of any pre-existing data. If the decode fails, decodedData is left empty.
-    static bool Decode(const ByteArray &encodedData, ByteArray &decodedData);
+    static bool Decode(const std::vector<uint8_t> &encodedData, std::vector<uint8_t> &decodedData);
 
 };
 
