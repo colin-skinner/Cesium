@@ -88,9 +88,9 @@ if __name__ == "__main__":
             accel_y = struct.unpack("f", data[4:8])[0]
             accel_z = struct.unpack("f", data[8:12])[0]
 
-            w_x = struct.unpack("f", data[12:16])[0]
-            w_y = struct.unpack("f", data[16:20])[0]
-            w_z = struct.unpack("f", data[20:24])[0]
+            w_x = struct.unpack("f", data[12:16])[0] * 180/3.14
+            w_y = struct.unpack("f", data[16:20])[0] * 180/3.14
+            w_z = struct.unpack("f", data[20:24])[0] * 180/3.14
 
             mag_x = struct.unpack("f", data[24:28])[0]
             mag_y = struct.unpack("f", data[28:32])[0]

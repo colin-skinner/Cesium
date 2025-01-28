@@ -72,9 +72,10 @@ bool ImuTask::create_telem_packet(vector<uint8_t> data)
     RETURN_FALSE_IF_FALSE(check_ranges(data));
     // TODO: Frame bounds checking
 
-    Vector3<float> accel_data;
-    Vector3<float> gyro_data;
-    Vector3<float> mag_data;
+    Vector3<float> accel_data{};
+    Vector3<float> gyro_data{};
+    Vector3<float> mag_data{};
+    float temp_data{};
 
     // Get data here, but for now, make fake vector
     // TODO: Implement real data
@@ -83,6 +84,7 @@ bool ImuTask::create_telem_packet(vector<uint8_t> data)
         accel_data = accels[accel_id]->get_accel_mps();
         gyro_data = gyros[gyro_id]->get_w_rps();
         mag_data = mags[mag_id]->get_B_uT();
+        temp_data = accels[accel_id]->get_temp_C();
     }
     // else if (frame == Frame::Sensor) {
     //     accel_data = accels[accel_id]->get_accel_mps();
@@ -110,8 +112,8 @@ bool ImuTask::create_telem_packet(vector<uint8_t> data)
     vec_to_buffer(gyro_data, response, 1 * vec_size);
     vec_to_buffer(accel_data, response, 2 * vec_size);
     
-    uint8_t temp_temp[] = {0, 0, 0, 0};
-    memcpy(&response[3*vec_size], temp_temp, 4);
+
+    memcpy(&response[3*vec_size], &temp_data, 4);
 
     // vector<uint8_t> response = {
     //     data[0], data[1], data[2], data[3], // accelx

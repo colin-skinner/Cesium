@@ -4,19 +4,20 @@
 
 namespace Cesium {
 namespace Sensor {
-Icm20948::Icm20948() 
-    :  //temp_C{0}
-     accel_factor{}
+Icm20948::Icm20948()
+    : accel_factor{}
     , gyro_factor{}
     , mag_factor{}
     , cs_pin{0}
 {
+    temp_C = 0;
     _spi_instance = &SPI;
 }
 
 Icm20948::Icm20948(uint8_t cs_pin, SPIClass* spi_instance)
 {
     _spi_instance = spi_instance;
+    interface = Interfaces::SPI;
     this->cs_pin = cs_pin;
 }
 

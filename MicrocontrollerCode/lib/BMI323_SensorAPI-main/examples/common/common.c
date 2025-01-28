@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "bmi3.h"
-#include "coines.h"
+#include "bosch_bmi3.h"
+// #include "coines.h"
 
 /******************************************************************************/
 /*!                Macro definition                                           */

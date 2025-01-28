@@ -9,8 +9,8 @@
 
 #include <stdio.h>
 #include <math.h>
-#include "bmi323.h"
-#include "common.h"
+#include "bosch_bmi323.h"
+#include "../common/common.h"
 
 /******************************************************************************/
 /*!         Macros definition                                                 */

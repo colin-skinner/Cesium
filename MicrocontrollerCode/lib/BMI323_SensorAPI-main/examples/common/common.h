@@ -12,7 +12,7 @@
 extern "C" {
 #endif /*__cplusplus */
 
-#include "bmi3.h"
+#include "bosch_bmi3.h"
 
 /******************************************************************************/
 /*!               User interface functions                                    */

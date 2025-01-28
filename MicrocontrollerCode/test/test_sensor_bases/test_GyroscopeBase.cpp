@@ -27,6 +27,7 @@ void test_gyro_base_constructor() {
     TEST_ASSERT_EQUAL(nullptr, sensor.get__spi_instance());
     TEST_ASSERT_EQUAL(nullptr, sensor.get__serial_instance());
     TEST_ASSERT_EQUAL(Interfaces::NOT_SET, sensor.get_interface());
+    TEST_ASSERT_EQUAL(NULL, sensor.get_temp_C());
     Matrix3<float> test_matrix{};
     TEST_ASSERT_TRUE(test_matrix == sensor.get_body_to_sensor());
 
@@ -46,6 +47,8 @@ void test_gyro_base_read() {
     TEST_ASSERT_EQUAL(0, sensor.get_last_read_time_ms());
     TEST_ASSERT_TRUE(sensor.read());
     TEST_ASSERT_INT_WITHIN(10, millis(), sensor.get_last_read_time_ms());
+
+    TEST_ASSERT_EQUAL(NULL, sensor.get_temp_C());
 
     Vector3<float> one_iter = {{{1.0}, {2.0}, {3.0}}};
 

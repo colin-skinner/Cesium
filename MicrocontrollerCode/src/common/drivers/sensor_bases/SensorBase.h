@@ -54,6 +54,7 @@ public:
     uint32_t get_interval_ms() const {return read_interval_ms;}
     uint32_t get_last_read_time_ms() const {return last_read_time_ms;}
     Interfaces get_interface() const {return interface;}
+    inline float get_temp_C() const {return temp_C;}
 };
 
 } // namespace Sensor

@@ -40,7 +40,7 @@
 
 /*!  @name          Header Files                                  */
 /******************************************************************************/
-#include "bmi3.h"
+#include "bosch_bmi3.h"
 
 #ifdef __KERNEL__
 #include <linux/types.h>
