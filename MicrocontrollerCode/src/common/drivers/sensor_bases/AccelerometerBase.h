@@ -8,8 +8,8 @@ namespace Sensor {
 class AccelerometerBase : virtual public SensorBase {
 
 protected:
-    Vector3<float> accel_mps;
-    Vector3<float> accel_body_mps;
+    Vector3<float> accel_mps2;
+    Vector3<float> accel_body_mps2;
 
 
 public:
@@ -19,8 +19,8 @@ public:
 
     virtual bool read(); 
 
-    const Vector3<float>& get_accel_mps() {return accel_mps;}
-    const Vector3<float>& get_accel_body_mps() {return accel_body_mps;}
+    const Vector3<float>& get_accel_mps2() {return accel_mps2;}
+    const Vector3<float>& get_accel_body_mps2() {return accel_body_mps2;}
 };
 
 

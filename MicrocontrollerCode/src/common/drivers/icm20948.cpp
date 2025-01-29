@@ -109,11 +109,10 @@ bool Icm20948::read()
     device.getEvent(&accel_event, &gyro_event, &temp_event, &mag_event);
 
     // If this doesn't work, just put "12" for the size
-    memcpy(  &accel_mps,  &accel_event.acceleration, sizeof(accel_mps)); // Copies as g's
-    memcpy(  &w_rps,  &gyro_event.gyro, sizeof(w_rps)); // Copies as deg/s
+    memcpy(  &accel_mps2,  &accel_event.acceleration, sizeof(accel_mps2)); // Copies as g's
+    memcpy(  &w_dps,  &gyro_event.gyro, sizeof(w_dps)); // Copies as deg/s
     memcpy(  &temp_C,  &temp_event.temperature, sizeof(temp_C)); // Copies as degC
     memcpy(  &B_uT,  &mag_event.magnetic, sizeof(B_uT)); // Copies as uT
-
     
     DEBUG("Temp:");
     DEBUG(temp_C);
@@ -121,19 +120,19 @@ bool Icm20948::read()
 
 
     DEBUG("\t\tAccel X: ");
-    DEBUG(accel_mps[0][0]);
+    DEBUG(accel_mps2[0][0]);
     DEBUG(", Y: ");
-    DEBUG(accel_mps[1][0]);
+    DEBUG(accel_mps2[1][0]);
     DEBUG(", Z: ");
-    DEBUG(accel_mps[2][0]);
+    DEBUG(accel_mps2[2][0]);
     DEBUG(" g, ");
 
     DEBUG("\t\tGyro X: ");
-    DEBUG(w_rps[0][0]);
+    DEBUG(w_dps[0][0]);
     DEBUG(", Y: ");
-    DEBUG(w_rps[1][0]);
+    DEBUG(w_dps[1][0]);
     DEBUG(", Z: ");
-    DEBUG(w_rps[2][0]);
+    DEBUG(w_dps[2][0]);
     DEBUGLN(" deg/s, ");
 
     DEBUG("\t\tMag X: ");

@@ -14,7 +14,7 @@ protected:
 public:
 
     BarometerBase();
-    virtual ~BarometerBase() = 0;
+    virtual ~BarometerBase();
 
     virtual bool read(); 
 };

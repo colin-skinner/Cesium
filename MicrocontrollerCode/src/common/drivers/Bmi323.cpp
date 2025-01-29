@@ -1,5 +1,5 @@
 #include "Bmi323.h"
-
+#include "../globals.h"
 extern "C" {
 #include "bosch_bmi3.h"
 }
@@ -52,82 +52,166 @@ bool Bmi323::configure(const char *config_name)
 }
 bool Bmi323::setup()
 {
+    pinMode(_cs_pin, OUTPUT);
 
-    return false;
+    uint16_t buff;
+    readReg(0, &buff, 0);
+
+    /*
+    Configure the accelerometer with or'ed parameters
+    - Normal mode: 0x4000
+    - No averaging: 0x0000
+    - Filtering to ODR/2: 0x0000
+    - Range 8g: 0x0020
+    - ODR 50Hz: 0x0007
+    */
+    uint16_t buff_acc[1] = {0x4027};
+    writeReg(BMI3_REG_ACC_CONF, buff_acc, 1);
+
+
+    /*
+    Configure the gyroscope with or'ed parameters
+    - Normal mode: 0x4000
+    - No averaging: 0x0000
+    - Filtering to ODR/2: 0x0000
+    - Range 2kdps: 0x0040
+    - ODR 800Hz: 0x000B
+    */
+    uint16_t buff_gyr[1] = {0x404B};
+    writeReg(BMI3_REG_GYR_CONF, buff_gyr, 1);
+
+
+
+    return true;
 }
 bool Bmi323::read()
 {
-    return false;
+    readAccelerometer((float*) &accel_mps2);
+    readGyroscope((float*) &w_dps);
+
+    DEBUG(accel_mps2[0][0]);
+    DEBUG("\t");
+    DEBUG(accel_mps2[0][1]);
+    DEBUG("\t");
+    DEBUG(accel_mps2[0][2]);
+    DEBUG("\t");
+
+    DEBUG(w_dps[0][0]);
+    DEBUG("\t");
+    DEBUG(w_dps[0][1]);
+    DEBUG("\t");
+    DEBUGLN(w_dps[0][2]);
+
+    return true;
+}
+
+bool Bmi323::read_chip_id()
+{
+    uint16_t buffer[1] = {0};
+
+    readReg(BMI3_REG_CHIP_ID, buffer, 1);
+
+    DEBUGLN(buffer[0], HEX);
+
+    return true;
 }
 
 
 bool Bmi323::readAccelerometer(float& x, float& y, float& z) {
+
+    uint16_t buffer[3] = {0};
+
+    readReg(BMI3_REG_ACC_DATA_X, buffer, 3);
+
+    x = lsb_to_mps2(buffer[0], BMI3_ACC_8G, 16);
+    y = lsb_to_mps2(buffer[1], BMI3_ACC_8G, 16);
+    z = lsb_to_mps2(buffer[2], BMI3_ACC_8G, 16);
+
     return true;
 }
 
 bool Bmi323::readGyroscope(float& x, float& y, float& z) {
+
+    uint16_t buffer[3] = {0};
+
+    readReg(BMI3_REG_GYR_DATA_X, buffer, 3);
+
+    x = lsb_to_dps(buffer[0], 2000, 16);
+    y = lsb_to_dps(buffer[1], 2000, 16);
+    z = lsb_to_dps(buffer[2], 2000, 16);
+
     return true;
 }
 
+bool Bmi323::readAccelerometer(float *buff)
+{
+    uint16_t buffer[3] = {0};
+
+    readReg(BMI3_REG_ACC_DATA_X, buffer, 3);
+
+    buff[0] = lsb_to_mps2(buffer[0], BMI3_ACC_8G, 16);
+    buff[1] = lsb_to_mps2(buffer[1], BMI3_ACC_8G, 16);
+    buff[2] = lsb_to_mps2(buffer[2], BMI3_ACC_8G, 16);
+
+
+    return true;
+}
+
+bool Bmi323::readGyroscope(float *buff)
+{
+    uint16_t buffer[3] = {0};
+
+    readReg(BMI3_REG_GYR_DATA_X, buffer, 3);
+
+    buff[0] = lsb_to_dps(buffer[0], 2000, 16);
+    buff[1] = lsb_to_dps(buffer[1], 2000, 16);
+    buff[2] = lsb_to_dps(buffer[2], 2000, 16);
+
+    return true;
+}
+
+bool Bmi323::readReg(uint8_t reg, uint16_t *buffer, size_t len)
+{
+    digitalWrite(_cs_pin, LOW);
+    _spi_instance->beginTransaction(settings);
+
+    _spi_instance->write(BMI3_SPI_RD_MASK | reg);
+    _spi_instance->write(0);
+    
+    for (size_t i = 0; i < len; i++) {
+        buffer[i] = _spi_instance->transfer(0);
+        buffer[i] |= (uint16_t)_spi_instance->transfer(0) << 8;
+    }
+
+    _spi_instance->endTransaction();
+
+    digitalWrite(_cs_pin, HIGH);
+
+    return true;
+}
+
+bool Bmi323::writeReg(uint8_t reg, const uint16_t *buffer, size_t len)
+{
+    digitalWrite(_cs_pin, LOW);
+    _spi_instance->beginTransaction(settings);
+
+    _spi_instance->write(BMI3_SPI_WR_MASK & reg);
+    
+    for (size_t i = 0; i < len; i++) {
+        _spi_instance->transfer(buffer[i] & 0xFF);
+        _spi_instance->transfer( (buffer[i] >> 8) & 0xFF);
+    }
+
+    _spi_instance->endTransaction();
+
+    digitalWrite(_cs_pin, HIGH);
+
+    return true;
+}
+
+
 /******************************************************************************/
 /*!           Static Function Definitions from BOSCH API                            */
-
-int8_t Bmi323::set_accel_config(bmi3_dev *dev)
-{
-    /* Status of API are returned to this variable. */
-    int8_t rslt;
-
-    // /* Structure to define accelerometer configuration. */
-    // struct bmi3_sens_config config;
-
-    // /* Structure to map interrupt */
-    // struct bmi3_map_int map_int = { 0 };
-
-    // /* Configure the type of feature. */
-    // config.type = BMI323_ACCEL;
-
-    // /* Get default configurations for the type of feature selected. */
-    // rslt = bmi323_get_sensor_config(&config, 1, dev);
-    // bmi3_error_codes_print_result("bmi323_get_sensor_config", rslt);
-
-    // if (rslt == BMI323_OK)
-    // {
-    //     map_int.acc_drdy_int = BMI3_INT1;
-
-    //     /* Map data ready interrupt to interrupt pin. */
-    //     rslt = bmi323_map_interrupt(map_int, dev);
-    //     bmi3_error_codes_print_result("bmi323_map_interrupt", rslt);
-
-    //     if (rslt == BMI323_OK)
-    //     {
-    //         /* NOTE: The user can change the following configuration parameters according to their requirement. */
-    //         /* Output Data Rate. By default ODR is set as 100Hz for accel. */
-    //         config.cfg.acc.odr = BMI3_ACC_ODR_100HZ;
-
-    //         /* Gravity range of the sensor (+/- 2G, 4G, 8G, 16G). */
-    //         config.cfg.acc.range = BMI3_ACC_RANGE_2G;
-
-    //         /* The Accel bandwidth coefficient defines the 3 dB cutoff frequency in relation to the ODR. */
-    //         config.cfg.acc.bwp = BMI3_ACC_BW_ODR_QUARTER;
-
-    //         /* Set number of average samples for accel. */
-    //         config.cfg.acc.avg_num = BMI3_ACC_AVG64;
-
-    //         /* Enable the accel mode where averaging of samples
-    //          * will be done based on above set bandwidth and ODR.
-    //          * Note : By default accel is disabled. The accel will get enable by selecting the mode.
-    //          */
-    //         config.cfg.acc.acc_mode = BMI3_ACC_MODE_NORMAL;
-
-    //         /* Set the accel configurations. */
-    //         rslt = bmi323_set_sensor_config(&config, 1, dev);
-    //         bmi3_error_codes_print_result("bmi323_set_sensor_config", rslt);
-    //     }
-    // }
-    rslt = 0;
-
-    return rslt;
-}
 
 float Bmi323::lsb_to_mps2(int16_t val, int8_t g_range, uint8_t bit_width)
 {
@@ -142,7 +226,7 @@ float Bmi323::lsb_to_mps2(int16_t val, int8_t g_range, uint8_t bit_width)
  * @brief This function converts lsb to degree per second for 16 bit gyro at
  * range 125, 250, 500, 1000 or 2000dps.
  */
-float lsb_to_dps(int16_t val, float dps, uint8_t bit_width)
+float Bmi323::lsb_to_dps(int16_t val, float dps, uint8_t bit_width)
 {
     double power = 2;
 
@@ -151,115 +235,6 @@ float lsb_to_dps(int16_t val, float dps, uint8_t bit_width)
     return (dps / (half_scale)) * (val);
 }
 
-
-void bmi3_error_codes_print_result(const char api_name[], int8_t rslt)
-{
-    switch (rslt)
-    {
-        case BMI3_OK:
-
-            /*! Do nothing */
-            break;
-
-        case BMI3_E_NULL_PTR:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Null pointer error. It occurs when the user tries to assign value (not address) to a pointer," " which has been initialized to NULL.\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_COM_FAIL:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Communication failure error. It occurs due to read/write operation failure and also due " "to power failure during communication\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_DEV_NOT_FOUND:
-            printf("%s\t", api_name);
-            printf("Error [%d] : Device not found error. It occurs when the device chip id is incorrectly read\r\n",
-                   rslt);
-            break;
-
-        case BMI3_E_INVALID_SENSOR:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Invalid sensor error. It occurs when there is a mismatch in the requested feature with the " "available one\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_INVALID_INT_PIN:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Invalid interrupt pin error. It occurs when the user tries to configure interrupt pins " "apart from INT1 and INT2\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_ACC_INVALID_CFG:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Invalid Accel configuration error. It occurs when there is an error in accel configuration" " register which could be one among range, BW or filter performance in reg address 0x20\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_GYRO_INVALID_CFG:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Invalid Gyro configuration error. It occurs when there is a error in gyro configuration" "register which could be one among range, BW or filter performance in reg address 0x21\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_INVALID_INPUT:
-            printf("%s\t", api_name);
-            printf("Error [%d] : Invalid input error. It occurs when the sensor input validity fails\r\n", rslt);
-            break;
-
-        case BMI3_E_INVALID_STATUS:
-            printf("%s\t", api_name);
-            printf("Error [%d] : Invalid status error. It occurs when the feature/sensor validity fails\r\n", rslt);
-            break;
-
-        case BMI3_E_DATA_RDY_INT_FAILED:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Data ready interrupt error. It occurs when the sample count exceeds the FOC sample limit " "and data ready status is not updated\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_INVALID_FOC_POSITION:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Invalid FOC position error. It occurs when average FOC data is obtained for the wrong" " axes\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_INVALID_ST_SELECTION:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Invalid self-test selection error. It occurs when there is an invalid precondition" "settings such as alternate accelerometer and gyroscope enable bits, accelerometer mode and output data rate\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_OUT_OF_RANGE:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Out of range error. It occurs when the range exceeds the maximum range for accel while performing FOC\r\n",
-                rslt);
-            break;
-
-        case BMI3_E_FEATURE_ENGINE_STATUS:
-            printf("%s\t", api_name);
-            printf(
-                "Error [%d] : Feature engine status error. It occurs when the feature engine enable mask is not set\r\n",
-                rslt);
-            break;
-
-        default:
-            printf("%s\t", api_name);
-            printf("Error [%d] : Unknown error code\r\n", rslt);
-            break;
-    }
-}
 
 }
 }

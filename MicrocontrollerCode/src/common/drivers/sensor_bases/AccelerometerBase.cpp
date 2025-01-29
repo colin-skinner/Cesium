@@ -5,8 +5,8 @@ namespace Sensor {
 
 
 AccelerometerBase::AccelerometerBase()
-    : accel_mps{}
-    , accel_body_mps{}
+    : accel_mps2{}
+    , accel_body_mps2{}
 {}
 
 AccelerometerBase::~AccelerometerBase()

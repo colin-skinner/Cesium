@@ -1,7 +1,7 @@
 #pragma once
 
 // AUTHOR: Colin Skinner / Cesium FSW
-// VERSION: X.X.X
+// VERSION: 1.X.X
 // PURPOSE: Driver code for Adafruit ICM20948
 
 #include <Arduino.h>

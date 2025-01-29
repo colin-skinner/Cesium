@@ -14,7 +14,7 @@ protected:
 public:
 
     MagnetometerBase();
-    virtual ~MagnetometerBase() = 0;
+    virtual ~MagnetometerBase();
 
     virtual bool read(); 
 

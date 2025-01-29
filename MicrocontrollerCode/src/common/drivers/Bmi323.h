@@ -1,10 +1,16 @@
 #pragma once
 
+// AUTHOR: Colin Skinner / Cesium FSW
+// VERSION: 1.X.X
+// PURPOSE: Driver code for BMI323
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
 
+#include "sensor_bases/AccelerometerBase.h"
 #include "sensor_bases/GyroscopeBase.h"
+
 #include "arduino_bmi323.h"
 extern "C" {
 #include "bosch_bmi323.h"
@@ -17,7 +23,7 @@ extern "C" {
 namespace Cesium {
 namespace Sensor {
 
-class Bmi323 : public GyroscopeBase {
+class Bmi323 : public AccelerometerBase, public GyroscopeBase {
 
 private:
     // BMI323 lower-level driver structs
@@ -30,6 +36,9 @@ private:
 
     uint8_t _cs_pin;
     SPIClass* spi_instance;
+    SPISettings settings;
+
+
 
     bool zero_structs();
 public:
@@ -47,44 +56,16 @@ public:
     bool readAccelerometer(float& x, float& y, float& z);
     bool readGyroscope(float& x, float& y, float& z);
 
-    /*!
-    * @brief This API prints the execution status
-    */
-    void bmi3_error_codes_print_result(const char api_name[], int8_t rslt);
+    // Overloaded to use with contiguous memory locations
+    bool readAccelerometer(float* buff);
+    bool readGyroscope(float* buff);
 
-    /*!
-    *  @brief This internal API is used to set configurations for accel.
-    *
-    *  @param[in] dev       : Structure instance of bmi3_dev.
-    *
-    *  @return Status of execution.
-    */
-    static int8_t set_accel_config(struct bmi3_dev *dev);
+    bool readReg(uint8_t reg, uint16_t* buffer, size_t len);
+    bool writeReg(uint8_t reg, const uint16_t *buffer, size_t len);
+    bool read_chip_id();
 
-    /*!
-    *  @brief This internal function converts lsb to meter per second squared for 16 bit accelerometer for
-    *  range 2G, 4G, 8G or 16G.
-    *
-    *  @param[in] val       : LSB from each axis.
-    *  @param[in] g_range   : Gravity range.
-    *  @param[in] bit_width : Resolution for accel.
-    *
-    *  @return Accel values in meter per second squared.
-    */
-    static float lsb_to_mps2(int16_t val, int8_t g_range, uint8_t bit_width = BMI3_16_BIT_RESOLUTION);
-
-    /*!
-    *  @brief This function converts lsb to degree per second for 16 bit gyro at
-    *  range 125, 250, 500, 1000 or 2000dps.
-    *
-    *  @param[in] val       : LSB from each axis.
-    *  @param[in] dps       : Degree per second.
-    *  @param[in] bit_width : Resolution for gyro.
-    *
-    *  @return Degree per second.
-    */
-    static float lsb_to_dps(int16_t val, float dps, uint8_t bit_width = BMI3_16_BIT_RESOLUTION);
-
+    float lsb_to_mps2(int16_t val, int8_t g_range, uint8_t bit_width);
+    float lsb_to_dps(int16_t val, float dps, uint8_t bit_width);
 
 };
 

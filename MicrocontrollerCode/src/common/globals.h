@@ -30,4 +30,5 @@ enum class Frame {
 
 #define DELETE_COPY_AND_ASSIGNMENT(Class) Class(const Class&) = delete; Class& operator=(const Class&) = delete;
 
-
+#define DEG2RAD PI / 180.0f
+#define RAD2DEG 180.0f / PI

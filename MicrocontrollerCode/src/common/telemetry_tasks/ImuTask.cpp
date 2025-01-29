@@ -81,14 +81,14 @@ bool ImuTask::create_telem_packet(vector<uint8_t> data)
     // TODO: Implement real data
     if (frame == Frame::Sensor) {
         accels[accel_id]->read();
-        accel_data = accels[accel_id]->get_accel_mps();
-        gyro_data = gyros[gyro_id]->get_w_rps();
+        accel_data = accels[accel_id]->get_accel_mps2();
+        gyro_data = gyros[gyro_id]->get_w_dps();
         mag_data = mags[mag_id]->get_B_uT();
         temp_data = accels[accel_id]->get_temp_C();
     }
     // else if (frame == Frame::Sensor) {
-    //     accel_data = accels[accel_id]->get_accel_mps();
-    //     gyro_data = gyros[gyro_id]->get_w_rps();
+    //     accel_data = accels[accel_id]->get_accel_mps2();
+    //     gyro_data = gyros[gyro_id]->get_w_dps();
     //     mag_data = mags[mag_id]->get_B_uT();
     // }
 

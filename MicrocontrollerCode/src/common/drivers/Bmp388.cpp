@@ -29,16 +29,29 @@ bool Bmp388::configure(const char * config_name)
 
 bool Bmp388::setup()
 {
-    for (int i=0; i<300; i++) {
-        if(device.begin_SPI(cs_pin, _spi_instance))
-            break;    
-        DEBUGLN("Failed to find BMP 1");
+    DEBUGLN("BRUH");
+    size_t retries = 0;
+    while(!device.begin_SPI(cs_pin, _spi_instance)) {
+        retries++;
+
+        if (retries >= 300) {
+            DEBUGLN("Failed to find sensor");
+            return false;
+        }
+
+        delay(10);
     }
-    return false;
+
+    device.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
+    device.setPressureOversampling(BMP3_OVERSAMPLING_4X);
+    device.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3);
+    device.setOutputDataRate(BMP3_ODR_50_HZ);
+    return true;
 }
 
 bool Bmp388::read()
 {
+    DEBUGLN("BRUH");
     if (! device.performReading()) {
         DEBUG("Failed to perform reading on BMI388");
         return false;

@@ -1,8 +1,8 @@
 #include "PacketBroker.h"
 
-#include "../telem_tasks/SystemStatusTask.h"
-#include "../telem_tasks/ClockTask.h"
-#include "../telem_tasks/ImuTask.h"
+#include "../telemetry_tasks/SystemStatusTask.h"
+#include "../telemetry_tasks/ClockTask.h"
+#include "../telemetry_tasks/ImuTask.h"
 
 namespace Cesium {
 

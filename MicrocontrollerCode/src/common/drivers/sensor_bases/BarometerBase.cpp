@@ -9,6 +9,10 @@ BarometerBase::BarometerBase()
     , pressure_kPa{}
 {}
 
+BarometerBase::~BarometerBase()
+{
+}
+
 bool BarometerBase::read()
 {
     // Sets last_read_time_ms; TODO: figure out if it is faster to just write it out

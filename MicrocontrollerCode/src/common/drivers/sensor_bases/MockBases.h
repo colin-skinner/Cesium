@@ -35,13 +35,13 @@ public:
 
         SensorBase::read();
 
-        accel_mps[0][0] += 1.0;
-        accel_mps[1][0] += 2.0;
-        accel_mps[2][0] += 3.0;
+        accel_mps2[0][0] += 1.0;
+        accel_mps2[1][0] += 2.0;
+        accel_mps2[2][0] += 3.0;
 
-        accel_body_mps[0][0] += 1.0;
-        accel_body_mps[1][0] += 2.0;
-        accel_body_mps[2][0] += 3.0;
+        accel_body_mps2[0][0] += 1.0;
+        accel_body_mps2[1][0] += 2.0;
+        accel_body_mps2[2][0] += 3.0;
 
         return true;
     }
@@ -56,8 +56,8 @@ public:
 
     Matrix3<float> get_body_to_sensor() {return body_to_sensor;}
 
-    Vector3<float> get_accel_mps() {return accel_mps;}
-    Vector3<float> get_accel_body_mps() {return accel_body_mps;}
+    Vector3<float> get_accel_mps2() {return accel_mps2;}
+    Vector3<float> get_accel_body_mps2() {return accel_body_mps2;}
 };
 
 
@@ -69,13 +69,13 @@ public:
 
         SensorBase::read();
 
-        w_rps[0][0] += 1.0;
-        w_rps[1][0] += 2.0;
-        w_rps[2][0] += 3.0;
+        w_dps[0][0] += 1.0;
+        w_dps[1][0] += 2.0;
+        w_dps[2][0] += 3.0;
 
-        w_body_rps[0][0] += 1.0;
-        w_body_rps[1][0] += 2.0;
-        w_body_rps[2][0] += 3.0;
+        w_body_dps[0][0] += 1.0;
+        w_body_dps[1][0] += 2.0;
+        w_body_dps[2][0] += 3.0;
 
         return true;
     }
@@ -90,8 +90,8 @@ public:
 
     Matrix3<float> get_body_to_sensor() {return body_to_sensor;}
 
-    Vector3<float> get_w_rps() {return w_rps;}
-    Vector3<float> get_w_body_rps() {return w_body_rps;}
+    Vector3<float> get_w_dps() {return w_dps;}
+    Vector3<float> get_w_body_dps() {return w_body_dps;}
 };
 
 class MockMagBase : public MagnetometerBase {

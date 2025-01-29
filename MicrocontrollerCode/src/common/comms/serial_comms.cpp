@@ -1,7 +1,7 @@
 #include "serial_comms.h"
 #include "PacketBroker.h" //Importing PacketBroker
 
-#include "../telem_tasks/SystemStatusTask.h" // ACK
+#include "../telemetry_tasks/SystemStatusTask.h" // ACK
 namespace Cesium {
 SerialComms::SerialComms() {}
 

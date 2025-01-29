@@ -4,9 +4,14 @@
 namespace Cesium {
 namespace Sensor {
 
-Ms5607::Ms5607(uint8_t cs_pin, SPIClass *spi_instance) : offsets{}
+Ms5607::Ms5607(uint8_t cs_pin, SPIClass *spi_instance) : P_offsets{}
 {
-    this->device = MS5611_SPI(cs_pin, spi_instance);
+    device.setCSpin(cs_pin);
+    device.setSPIport(spi_instance);
+
+    this->_spi_instance = spi_instance;
+    this->interface = Interfaces::SPI;
+    this->_cs_pin = cs_pin;
 }
 
 Ms5607::~Ms5607()
@@ -20,25 +25,16 @@ bool Ms5607::configure(const char* config_name) {
 
 bool Ms5607::calibrate(float current_alt_m)
 {
-    // Use GNC altitude if 0
-    if (current_alt_m == 0) {
-
-    }
-    // Otherwise use GPS altitude
-    else if (current_alt_m == -1) {
-        // Make sure GPS altitude updated within the past second
-    }
+    
 
     // Simple linear offset
     return false;
 }
 
-bool Ms5607::calibrate(float offsets[2])
+void Ms5607::set_P_offsets(float a, float b)
 {
-    // NO CHECKING to see if this is 2 long
-    memcpy(this->offsets, offsets, 2 * sizeof(float));
-
-    return false;
+    P_offsets[0] = a;
+    P_offsets[1] = b;
 }
 
 bool Ms5607::setup()
@@ -60,6 +56,7 @@ bool Ms5607::setup()
     
     return true;
 }
+
 bool Ms5607::read()
 {
     if (device.read() != MS5611_READ_OK) {
