@@ -29,7 +29,7 @@ void test_sensor_base_constructor() {
     TEST_ASSERT_EQUAL(nullptr, sensor.get__spi_instance());
     TEST_ASSERT_EQUAL(nullptr, sensor.get__serial_instance());
     TEST_ASSERT_EQUAL(Interfaces::NOT_SET, sensor.get_interface());
-    TEST_ASSERT_EQUAL(NULL, sensor.get_temp_C());
+    TEST_ASSERT_EQUAL_FLOAT(NAN, sensor.get_temp_C());
     Matrix3<float> test_sensor_base_matrix{};
     TEST_ASSERT_TRUE(test_sensor_base_matrix == sensor.get_body_to_sensor());
 }
@@ -75,7 +75,7 @@ void test_sensor_base_read() {
     TEST_ASSERT_EQUAL(0, sensor.get_last_read_time_ms());
     TEST_ASSERT_TRUE(sensor.read());
     TEST_ASSERT_INT_WITHIN(100, millis(), sensor.get_last_read_time_ms());
-    TEST_ASSERT_EQUAL(NULL, sensor.get_temp_C());
+    TEST_ASSERT_EQUAL_FLOAT(NAN, sensor.get_temp_C());
 }
 
 ////////////////////////////////////////////////////////////

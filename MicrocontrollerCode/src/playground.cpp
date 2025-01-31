@@ -1,105 +1,181 @@
 
+// #include <Arduino.h>
+// // #include "common/drivers/sensor_bases/SensorBase.h"
+// // #include "common/drivers/Icm20948.h"
+// // #include <SPI.h>
+// // #include "common/globals.h"
+// // #include "common/math/vector.h"
+// // #include "config/ConfigReader.h"
+// #include "common/drivers/Ms5607.h"
+// #include "common/drivers/sensor_bases/BarometerBase.h"
+// #include "common/drivers/Bmi323.h"
+// #include "common/drivers/Bmp388.h"
+// #include <CAN.h>
+
+// // String type = "receiver";
+// // String type = "sender";
+
+// // uint8_t i;
+
+
+// #define HSCK 14
+// #define HMISO 36
+// #define HMOSI 13
+// #define IMU_CS 33
+
+// #define VSCK 18
+// #define VMISO 19
+// #define VMOSI 23
+// #define MS5607_CS 2
+// #define BMP_CS 32
+// #define BMI_CS 16
+
+// SPIClass vspi(VSPI);
+// SPIClass hspi(HSPI);
+
+// // Cesium::Sensor::Ms5607 altimeter2(MS5607_CS, &vspi);
+
+// // Cesium::Sensor::Bmi323 bmi(BMI_CS, &vspi);
+
+// Cesium::Sensor::Bmp388 altimeter1(BMP_CS, &hspi);
+
+
+// void setup() {
+
+//     pinMode(MS5607_CS, OUTPUT);
+//     pinMode(IMU_CS, OUTPUT);
+//     pinMode(BMI_CS, OUTPUT);
+//     pinMode(4, OUTPUT);
+//     pinMode(BMP_CS, OUTPUT);
+
+//     digitalWrite(MS5607_CS, HIGH);
+//     digitalWrite(IMU_CS, HIGH);
+//     digitalWrite(BMI_CS, HIGH);
+//     digitalWrite(4, HIGH);
+//     digitalWrite(BMP_CS, HIGH);
+    
+    
+//     Serial.begin(115200);
+
+//     vspi.begin(VSCK, VMISO, VMOSI);
+//     hspi.begin(HSCK, HMISO, HMOSI);
+
+//     altimeter1.setup();
+    
+//     // altimeter2.setup();
+
+    
+//     // // CAN.setPins(26, 25);
+//     // CAN.setPins(25, 26);
+    
+//     // if (!CAN.begin(500E3)) {
+//     //     Serial.println("Starting CAN failed!");
+//     //     while (1);
+//     // }
+
+//     // i = 0;
+
+    
+
+
+
+// }
+
+// void loop() {
+
+//     // altimeter2.read();
+//     // bmi.read();
+//     // altimeter1.read();
+//     // if (type == "sender") {
+//     //     Serial.print("Sending packet ... ");
+
+//     //     CAN.beginPacket(0x12);
+//     //     // CAN.write('h');
+//     //     // CAN.write('e');
+//     //     // CAN.write('l');
+//     //     // CAN.write('l');
+//     //     // CAN.write('o');
+//     //     CAN.write(i);
+//     //     CAN.endPacket();
+
+//     //     Serial.println("done");
+
+//     //     delay(100);
+//     //     i++;
+//     // }
+
+//     // else if (type == "receiver") {
+        
+//     //     // try to parse packet
+//     //     int packetSize = CAN.parsePacket();
+
+//     //     if (packetSize) {
+//     //         // received a packet
+//     //         Serial.print("Received ");
+
+//     //         if (CAN.packetExtended()) {
+//     //             Serial.print("extended ");
+//     //         }
+
+//     //         if (CAN.packetRtr()) {
+//     //             // Remote transmission request, packet contains no data
+//     //             Serial.print("RTR ");
+//     //         }
+
+//     //         Serial.print("packet with id 0x");
+//     //         Serial.print(CAN.packetId(), HEX);
+
+//     //         if (CAN.packetRtr()) {
+//     //             Serial.print(" and requested length ");
+//     //             Serial.println(CAN.packetDlc());
+//     //         } 
+//     //         else {
+//     //             Serial.print(" and length ");
+//     //             Serial.println(packetSize);
+
+//     //             // only print packet data for non-RTR packets
+//     //             while (CAN.available()) {
+//     //                 Serial.print((int)CAN.read());
+//     //             }
+//     //             Serial.println();
+//     //         }
+
+//     //         Serial.println();
+//     //     }
+//     // }
+
+
+    
+
+// }
+
 #include <Arduino.h>
-// #include "common/drivers/sensor_bases/SensorBase.h"
-#include "common/drivers/Icm20948.h"
 #include <SPI.h>
-#include "common/globals.h"
-#include "common/math/vector.h"
-#include "config/ConfigReader.h"
+#include <Adafruit_BMP3XX.h>
 
-using namespace Cesium;
-using namespace std;
-using namespace Sensor;
-#define LED 2
-
-#define HSCK 14
-#define HMISO 36
-#define HMOSI 13
-#define IMU_CS 33
-
-Icm20948 sensor(IMU_CS, &SPI);
-
-
-const char vectors[] = R"(
-{
-    "good_vector" : [
-        [1],
-        [2],
-        [3]
-    ],
-    "bad_col_size" : [
-        [1,2],
-        [2],
-        [3]
-    ],
-    "row_mismatch" : [
-        [1],
-        [2]
-    ],
-    "bad_datatype" : [
-        ["wow"],
-        [2],
-        [3]
-    ]
-
-}
-)";
+#define BMP_CS 32
+SPIClass hspi(HSPI);
+Adafruit_BMP3XX bmp;
 
 void setup() {
-    
     Serial.begin(115200);
-    SPI.begin(HSCK, HMISO, HMOSI, IMU_CS);
 
-    sensor.setup();
+    hspi.begin(14, 36, 13);  // HSCK, HMISO, HMOSI
+    pinMode(BMP_CS, OUTPUT);
+    digitalWrite(BMP_CS, HIGH);
 
-    JsonDocument doc;
-    File::json_open(vectors, doc);
+    Serial.println("Initializing BMP388...");
 
-    Vector3<int> test_int_vec;
-    Vector3<float> test_float_vec;
-    Vector3<int> expected = {{
-        {1},
-        {2},
-        {3}
-    }};
-    Vector3<float> expected_float = {{
-        {1.0},
-        {2.0},
-        {3.0}
-    }};
-    Serial.println(1);
-    Serial.println("Good" + (String)File::json_extract<int,3,1>(doc, "good_vector", test_int_vec));
-    Serial.println(2);
-    Serial.println("Good" + (String)File::json_extract<float,3,1>(doc, "good_vector", test_float_vec));
-    Serial.println(3);
-    Serial.println(matrix_int_equals(expected, test_int_vec));
-    Serial.println(4);
-    Serial.println(matrix_float_equals(expected_float, test_float_vec));
+    if (!bmp.begin_SPI(BMP_CS, &hspi, 1000000)) {
+        Serial.println("BMP388 not detected!");
+        while (1);
+    }
 
+    Serial.println("BMP388 initialized successfully.");
 }
 
 void loop() {
-
-    sensor.read();
-
-    // Vector3<float> accel = sensor.get_accel_mps();
-    // Vector3<float> gyro = sensor.get_w_rps();
-
-    // Serial.print("Accel: " + String(norm(accel)));
-    // Serial.print("\t\tValues: ");
-    // for (auto i : accel) {
-    //     Serial.print(i[0]);
-    //     Serial.print("\t");
-    // }
-
-    // Serial.print("Norm: " + String(norm(gyro)));
-    // Serial.print("\t\tGyro: ");
-    // for (auto i : gyro) {
-    //     Serial.print(i[0]);
-    //     Serial.print("\t");
-    // }
-
-    // Serial.println();
-    delay(10);
-
+    Serial.print("Temperature: ");
+    Serial.println(bmp.temperature);
+    delay(1000);
 }

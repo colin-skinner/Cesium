@@ -27,14 +27,14 @@ void test_gyro_base_constructor() {
     TEST_ASSERT_EQUAL(nullptr, sensor.get__spi_instance());
     TEST_ASSERT_EQUAL(nullptr, sensor.get__serial_instance());
     TEST_ASSERT_EQUAL(Interfaces::NOT_SET, sensor.get_interface());
-    TEST_ASSERT_EQUAL(NULL, sensor.get_temp_C());
+    TEST_ASSERT_EQUAL_FLOAT(NAN, sensor.get_temp_C());
     Matrix3<float> test_matrix{};
     TEST_ASSERT_TRUE(test_matrix == sensor.get_body_to_sensor());
 
     Vector3<float> zero_vector = {{{0}, {0}, {0}}};
 
-    TEST_ASSERT_TRUE(zero_vector == sensor.get_w_rps());
-    TEST_ASSERT_TRUE(zero_vector == sensor.get_w_body_rps());
+    TEST_ASSERT_TRUE(zero_vector == sensor.get_w_dps());
+    TEST_ASSERT_TRUE(zero_vector == sensor.get_w_body_dps());
 }
 
 ////////////////////////////////////////////////////////////
@@ -48,20 +48,20 @@ void test_gyro_base_read() {
     TEST_ASSERT_TRUE(sensor.read());
     TEST_ASSERT_INT_WITHIN(10, millis(), sensor.get_last_read_time_ms());
 
-    TEST_ASSERT_EQUAL(NULL, sensor.get_temp_C());
+    TEST_ASSERT_EQUAL_FLOAT(NAN, sensor.get_temp_C());
 
     Vector3<float> one_iter = {{{1.0}, {2.0}, {3.0}}};
 
     for (int i = 0; i < 3; i++) {
-        TEST_ASSERT_FLOAT_WITHIN(1e-10, one_iter[i][0], sensor.get_w_rps()[i][0]);
-        TEST_ASSERT_FLOAT_WITHIN(1e-10, one_iter[i][0], sensor.get_w_body_rps()[i][0]);
+        TEST_ASSERT_FLOAT_WITHIN(1e-10, one_iter[i][0], sensor.get_w_dps()[i][0]);
+        TEST_ASSERT_FLOAT_WITHIN(1e-10, one_iter[i][0], sensor.get_w_body_dps()[i][0]);
     }
 
     Vector3<float> two_iter = {{{2.0}, {4.0}, {6.0}}};
 
     for (int i = 0; i < 3; i++) {
-        TEST_ASSERT_FLOAT_WITHIN(1e-10, one_iter[i][0], sensor.get_w_rps()[i][0]);
-        TEST_ASSERT_FLOAT_WITHIN(1e-10, one_iter[i][0], sensor.get_w_body_rps()[i][0]);
+        TEST_ASSERT_FLOAT_WITHIN(1e-10, one_iter[i][0], sensor.get_w_dps()[i][0]);
+        TEST_ASSERT_FLOAT_WITHIN(1e-10, one_iter[i][0], sensor.get_w_body_dps()[i][0]);
     }
 
 }

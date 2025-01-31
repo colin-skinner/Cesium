@@ -296,6 +296,10 @@ void MS5611_SPI::setSPIport(SPIClass* spi_port) {
     _mySPI = spi_port;
 }
 
+void MS5611_SPI::setCSpin(uint8_t pin) {
+    _select = pin;
+}
+
 
 void MS5611_SPI::setSPIspeed(uint32_t speed)
 {

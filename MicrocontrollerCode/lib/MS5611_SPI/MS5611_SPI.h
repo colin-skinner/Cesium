@@ -121,6 +121,7 @@ public:
 
   //       speed in Hz
   void     setSPIspeed(uint32_t speed);
+  void     setCSpin(uint8_t pin);
   void     setSPIport(SPIClass* spi_port);
   uint32_t getSPIspeed();
 
