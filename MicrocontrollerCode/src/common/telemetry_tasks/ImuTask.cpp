@@ -133,7 +133,7 @@ bool ImuTask::create_telem_packet(vector<uint8_t> data)
     packet.configure((int)Topic::IMU, (int)ImuCMD::TELEM, response);
     packet.packetize();
 
-    SerialComms::emit_packet(packet);
+    SerialComms::emit_packet(packet, SERIAL_UART);
 
 
     return true;
@@ -147,7 +147,7 @@ bool ImuTask::send_telem_response(const char* message)
     packet.configure((int)Topic::IMU, (int)ImuCMD::TELEM, data);
     packet.packetize();
 
-    SerialComms::emit_packet(packet);
+    SerialComms::emit_packet(packet, SERIAL_UART);
 
     return true;
 }

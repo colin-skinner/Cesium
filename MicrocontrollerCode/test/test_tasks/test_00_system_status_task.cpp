@@ -24,9 +24,8 @@ void test_00_packet_routed(pair<SystemStatusCMD, vector<uint8_t> > command) {
 
     packet.configure((size_t) Topic::SYSTEM_STATUS, (size_t) command.first, command.second);
     packet.packetize();
-
-    TEST_ASSERT_TRUE(PacketBroker::route_packet(packet) == Topic::SYSTEM_STATUS);
-    TEST_ASSERT_TRUE(SystemStatusTask::route_packet(packet) == command.first);
+    TEST_ASSERT_EQUAL(Topic::SYSTEM_STATUS, PacketBroker::route_packet(packet));
+    TEST_ASSERT_EQUAL(command.first, SystemStatusTask::route_packet(packet));
 }
 
 

@@ -111,7 +111,7 @@ bool Bmi323::read_chip_id()
 
     readReg(BMI3_REG_CHIP_ID, buffer, 1);
 
-    DEBUGLN(buffer[0], HEX);
+    Serial.println(buffer[0], HEX);
 
     return true;
 }

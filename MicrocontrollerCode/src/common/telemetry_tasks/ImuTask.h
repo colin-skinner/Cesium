@@ -14,6 +14,7 @@ namespace Cesium {
 
 class PacketBroker; // Forward definition
 
+// TODO: make tests
 class ImuTask {
     
 private:

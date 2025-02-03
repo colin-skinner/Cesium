@@ -69,7 +69,7 @@ void SystemStatusTask::send_ack(const char* message)
     // ACK_PACKET.set_millistamp(1);
     ACK_PACKET.packetize();
 
-    SerialComms::emit_packet(ACK_PACKET);
+    SerialComms::emit_packet(ACK_PACKET, SERIAL_UART);
     DEBUGLN("Emitted ACK Packet");
 }
 
@@ -81,7 +81,7 @@ void SystemStatusTask::send_nack(const char* message)
     packet.packetize();
 
     
-    SerialComms::emit_packet(packet);
+    SerialComms::emit_packet(packet, SERIAL_UART);
     DEBUGLN("Emitted NACK Packet");
 }
 
@@ -95,7 +95,7 @@ void SystemStatusTask::send_sum(BasePacket &packet)
     response.packetize();
 
     
-    SerialComms::emit_packet(response);
+    SerialComms::emit_packet(response, SERIAL_UART);
     DEBUGLN("Emitted SUM Packet");
 }
 
@@ -106,7 +106,7 @@ void SystemStatusTask::send_not_implemented(const char* message) {
     packet.packetize();
 
     
-    SerialComms::emit_packet(packet);
+    SerialComms::emit_packet(packet, SERIAL_UART);
     DEBUGLN("Emitted NotImplemented Packet");
 }
 

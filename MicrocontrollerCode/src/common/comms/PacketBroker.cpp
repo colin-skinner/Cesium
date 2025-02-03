@@ -2,6 +2,7 @@
 
 #include "../telemetry_tasks/SystemStatusTask.h"
 #include "../telemetry_tasks/ClockTask.h"
+#include "../telemetry_tasks/FilesystemTask.h"
 #include "../telemetry_tasks/ImuTask.h"
 
 namespace Cesium {
@@ -22,10 +23,17 @@ Topic PacketBroker::route_packet(BasePacket &packet)
         ClockTask::route_packet(packet);
         break;
 
+    case Topic::FILESYSTEM:
+        DEBUG("Received IMU Packet - ");
+        FilesystemTask::route_packet(packet);
+        break;
+
     case Topic::IMU:
         DEBUG("Received IMU Packet - ");
         ImuTask::route_packet(packet);
         break;
+
+
 
     // case Topic::TEST_ROCKETS:
     //     DEBUG("Received Test Rocket Packet - ");

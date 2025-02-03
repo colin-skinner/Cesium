@@ -24,7 +24,7 @@ ClockCMD ClockTask::route_packet(BasePacket &packet)
 
     case ClockCMD::JUMP_CLOCK_TELEM: // No further action
         DEBUGLN("JUMP_CLOCK_TELEM");
-        SystemStatusTask::send_ack("CLOCK::JUMP_CLOCK_TELEM");
+        // SystemStatusTask::send_ack("CLOCK::JUMP_CLOCK_TELEM");
         jump_clock_telem(packet);
         break;
 
@@ -78,7 +78,7 @@ void ClockTask::send_jump_clock_response(String message)
     packet.configure((int)Topic::CLOCK, (int)ClockCMD::JUMP_CLOCK_TELEM, data);
     packet.packetize();
 
-    SerialComms::emit_packet(packet);
+    SerialComms::emit_packet(packet, SERIAL_UART);
 }
 
 }

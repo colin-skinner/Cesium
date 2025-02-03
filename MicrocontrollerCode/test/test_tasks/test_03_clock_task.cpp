@@ -24,8 +24,8 @@ void test_03_packet_routed(pair<ClockCMD, vector<uint8_t> > command) {
     packet.configure((size_t) Topic::SYSTEM_STATUS, (size_t) command.first, command.second);
     packet.packetize();
 
-    TEST_ASSERT_TRUE(PacketBroker::route_packet(packet) == Topic::SYSTEM_STATUS);
-    TEST_ASSERT_TRUE(ClockTask::route_packet(packet) == command.first);
+    TEST_ASSERT_EQUAL(Topic::SYSTEM_STATUS, PacketBroker::route_packet(packet));
+    TEST_ASSERT_EQUAL(command.first, ClockTask::route_packet(packet));
 
 
     String message = "Failed with command = " + (size_t)command.first;

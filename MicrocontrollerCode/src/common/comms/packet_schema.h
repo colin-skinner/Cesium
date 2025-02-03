@@ -78,6 +78,7 @@ enum class FilesystemCMD {
     READ_FILE = 2,
     DELETE_FILE = 3, // Includes directories
     FILESYSTEM_STATS = 4,
+    RESET_CONFIGS = 5,
     SUCCESS = 15
 
 };

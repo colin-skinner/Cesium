@@ -1,5 +1,5 @@
 
-// #include <Arduino.h>
+#include <Arduino.h>
 // // #include "common/drivers/sensor_bases/SensorBase.h"
 // // #include "common/drivers/Icm20948.h"
 // // #include <SPI.h>
@@ -149,33 +149,4 @@
 
 // }
 
-#include <Arduino.h>
-#include <SPI.h>
-#include <Adafruit_BMP3XX.h>
 
-#define BMP_CS 32
-SPIClass hspi(HSPI);
-Adafruit_BMP3XX bmp;
-
-void setup() {
-    Serial.begin(115200);
-
-    hspi.begin(14, 36, 13);  // HSCK, HMISO, HMOSI
-    pinMode(BMP_CS, OUTPUT);
-    digitalWrite(BMP_CS, HIGH);
-
-    Serial.println("Initializing BMP388...");
-
-    if (!bmp.begin_SPI(BMP_CS, &hspi, 1000000)) {
-        Serial.println("BMP388 not detected!");
-        while (1);
-    }
-
-    Serial.println("BMP388 initialized successfully.");
-}
-
-void loop() {
-    Serial.print("Temperature: ");
-    Serial.println(bmp.temperature);
-    delay(1000);
-}

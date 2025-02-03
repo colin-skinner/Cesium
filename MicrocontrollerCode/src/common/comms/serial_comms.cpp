@@ -3,18 +3,38 @@
 
 #include "../telemetry_tasks/SystemStatusTask.h" // ACK
 namespace Cesium {
+
+MockSerial* SerialComms::mock_port = nullptr;
+
 SerialComms::SerialComms() {}
 
 void SerialComms::emit(std::vector<uint8_t> vec, CommsInterface interface) {
-    for (auto byte : vec) {
-        Serial.write(byte);
+
+    switch(interface) {
+
+    case SERIAL_UART:
+        for (auto byte : vec) {
+            Serial.write(byte);
+        }
+        break;
+    case MOCK_UART:
+        mock_port->write(vec);
+        break;
     }
     // Serial.write('\0'); // NEED to add a line
 }
 
 void SerialComms::emit(String str, CommsInterface interface)
 {
-    Serial.write(str.c_str());
+    switch(interface) {
+
+    case SERIAL_UART:
+        Serial.write(str.c_str());
+        break;
+    case MOCK_UART:
+        mock_port->write(str);
+    }
+    
 }
 
 void SerialComms::emit_packet(BasePacket& packet, CommsInterface interface) {
@@ -45,22 +65,6 @@ void SerialComms::process_uart() {
 
         PacketBroker::route_packet(result);
 
-        
-
-        // DEBUG("Received packet: {");
-        // DEBUG("Topic ID: " + String(result.get_topic(), HEX));
-        // DEBUG(", Command ID: " + String(result.get_command(), HEX));
-        // DEBUG(", Millistamp: " + String(result.get_millistamp(), HEX));
-        // DEBUG(", Data Length: " + String(result.get_data_length(), HEX));
-        // DEBUG(", CRC: " + String(result.get_crc(), HEX));
-        // std::string data_str(result.get_data().begin(), result.get_data().end());
-        // DEBUG(", Data: " + String(data_str.c_str()));
-        // DEBUGLN("}");
-
-        // for (auto byte : result.get_packet()) {
-        //     Serial.write(byte);
-        // }
-        // Serial.println();
         
     }
 }
