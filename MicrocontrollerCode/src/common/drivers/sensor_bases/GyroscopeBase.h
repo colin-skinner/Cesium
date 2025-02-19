@@ -8,8 +8,8 @@ namespace Sensor {
 class GyroscopeBase : virtual public SensorBase {
 
 protected:
-    Vector3<float> w_dps;
-    Vector3<float> w_body_dps;
+    Vector3<float> w_rps;
+    Vector3<float> w_body_rps;
 
 public:
 
@@ -18,8 +18,8 @@ public:
 
     virtual bool read(); 
 
-    const Vector3<float>& get_w_dps() {return w_dps;}
-    const Vector3<float>& get_w_body_dps() {return w_body_dps;}
+    const Vector3<float>& get_w_rps() {return w_rps;}
+    const Vector3<float>& get_w_body_rps() {return w_body_rps;}
 };
 
 

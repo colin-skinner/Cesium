@@ -131,9 +131,12 @@ enum class ActuatorCMD {
     COMMAND = 1
 };
 
-enum class TestRocketsCMD {
-    PACKET_A = 0,
-    PACKET_B = 1
+enum class TestRocketCMD {
+    CONFIGURE = 0,
+    PACKET_A = 1,
+    PACKET_B = 2,
+    PACKET_C = 3,
+
 };
 
 

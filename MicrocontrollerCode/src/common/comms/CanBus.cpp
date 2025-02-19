@@ -2,34 +2,58 @@
 #include "../globals.h"
 namespace Cesium {
 
-CanBus::CanBus(uint8_t rx, uint8_t tx)
+CanBus::CanBus(uint8_t rx, uint8_t tx, uint16_t timeout)
+: _timeout(timeout)
 {
     this->setPins(rx, tx);
 }
 
-bool CanBus::transmit(int id, const uint8_t * buffer, size_t len)
+bool CanBus::setup(long baud_rate)
+{
+    uint8_t retries = 0;
+    while (!this->begin(baud_rate)) {
+        Serial.println("Starting CAN failed!");
+        retries++;
+
+        if (retries <= 30)
+            return false;
+    }
+
+    return true;
+
+
+}
+
+bool CanBus::transmit(int id, const uint8_t *buffer, size_t len)
 {
     size_t bytes_sent = 0;
-
+    // Serial.println(id);
     // Repeat until data is sent
     while(bytes_sent < len) {
         
         // If fewer than 8 bytes remaining, write to end of buffer 
         size_t remaining = len - bytes_sent;
-        if (remaining < 8) {
+
+        if (remaining <= 8) {
+            // Serial.println("hm");
             this->beginPacket(id);
             this->write(buffer + bytes_sent, len - bytes_sent);
-            this->endPacket();
+            // Serial.println("yes");
+            return this->endPacket();
 
-            return true;
         }
+        
 
         // Otherwise write 8 bytes
         this->beginPacket(id);
         this->write(buffer + bytes_sent, 8);
+        // Serial.println("oh");
         this->endPacket();
+
+        // Serial.println("ah");
         
         remaining += 8;
+        bytes_sent += 8;
     }
     return true;
 }
@@ -50,28 +74,28 @@ bool CanBus::transmit(int id, const std::vector<uint8_t> &vec, size_t len)
 size_t CanBus::receive(int &id, uint8_t *buffer)
 {
     // Return 0 if packet size is 0
-    size_t packet_size = CAN.parsePacket();
+    size_t packet_size = this->parsePacket();
     if (packet_size == 0) {
         DEBUGLN("No CAN packet");
         return 0;
     }
 
     // Filters RTR (remote transmission requests)
-    if (CAN.packetRtr()) {
+    if (this->packetRtr()) {
         DEBUGLN("RTR");
         return 0;
     }
 
     // Packet ID
-    id = CAN.packetId();
+    id = this->packetId();
     DEBUG("packet with id 0x");
     DEBUG(id, HEX);
 
 
     // Stores 
     int index = 0;
-    while (CAN.available()) {
-        buffer[index] = CAN.read();
+    while (this->available()) {
+        buffer[index] = this->read();
         index++;
     }
 

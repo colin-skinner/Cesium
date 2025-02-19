@@ -17,6 +17,7 @@ void setup(){
     test_all_accel_base();
     test_all_gyro_base();
     test_all_mag_base();
+    test_all_gps_base();
     UNITY_END();
 }
 void loop(){}

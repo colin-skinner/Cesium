@@ -30,7 +30,7 @@ void test_sensor_base_constructor() {
     TEST_ASSERT_EQUAL(nullptr, sensor.get__serial_instance());
     TEST_ASSERT_EQUAL(Interfaces::NOT_SET, sensor.get_interface());
     TEST_ASSERT_EQUAL_FLOAT(NAN, sensor.get_temp_C());
-    Matrix3<float> test_sensor_base_matrix{};
+    Quaternion<float> test_sensor_base_matrix{};
     TEST_ASSERT_TRUE(test_sensor_base_matrix == sensor.get_body_to_sensor());
 }
 

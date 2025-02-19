@@ -5,7 +5,19 @@
 
 namespace Cesium {
 
-bool check_within_bits(int value, int bits, String title);
+bool check_within_bits(int value, int bits, String title) {
+    if(value >= (1 << bits)) {
+        DEBUGLN(title + " not within " + bits + " bits (less than " + (1 << (bits-1)) + ")");
+        return false;
+    }
+    
+    if (value < 0) {
+        DEBUGLN(title + " less than 0");
+        return false;
+    }
+
+    return true;
+}
 
 
 }

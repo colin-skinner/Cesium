@@ -5,7 +5,7 @@
 #include <SPI.h>
 
 #include "../../globals.h"
-#include "../../math/vector.h"
+#include "../../math/quaternion.h"
 
 namespace Cesium {
 namespace Sensor {
@@ -29,7 +29,7 @@ protected:
     HardwareSerial* _serial_instance; // For UART comms
     Interfaces interface;
 
-    Matrix3<float> body_to_sensor;
+    Quaternion<float> body_to_sensor;
 
     // TODO: add temperature
     float temp_C;
@@ -50,7 +50,7 @@ public:
 
     DELETE_COPY_AND_ASSIGNMENT(SensorBase)
 
-    void set_rotation_matrix(Matrix3<float> matrix) {body_to_sensor = matrix;}
+    void set_rotation_matrix(Matrix3<float> matrix) {body_to_sensor = quat_from_R(matrix);}
     uint32_t get_interval_ms() const {return read_interval_ms;}
     uint32_t get_last_read_time_ms() const {return last_read_time_ms;}
     Interfaces get_interface() const {return interface;}

@@ -1,152 +1,62 @@
-
+#include <SPI.h>
+#include <SparkFun_u-blox_GNSS_Arduino_Library.h>
 #include <Arduino.h>
-// // #include "common/drivers/sensor_bases/SensorBase.h"
-// // #include "common/drivers/Icm20948.h"
-// // #include <SPI.h>
-// // #include "common/globals.h"
-// // #include "common/math/vector.h"
-// // #include "config/ConfigReader.h"
-// #include "common/drivers/Ms5607.h"
-// #include "common/drivers/sensor_bases/BarometerBase.h"
-// #include "common/drivers/Bmi323.h"
-// #include "common/drivers/Bmp388.h"
-// #include <CAN.h>
+#include "common/math/quaternion.h"
+#define HSCK 14
+#define HMISO 36
+#define HMOSI 13
+#define CS 33
+SPIClass hspi(HSPI);
+// Create GPS object
+SFE_UBLOX_GNSS myGNSS;
 
-// // String type = "receiver";
-// // String type = "sender";
+void setup() {
+    Serial.begin(115200);
 
-// // uint8_t i;
+    Quaternion<float> quat = {{0.3368608, -0.1684304, 0, -0.9263671}};
 
+    Matrix3<float> mat = {{{-0.7163121,  0.6241135,  0.3120568},
+                           {-0.6241135, -0.7730497,  0.1134752},
+                           {0.3120568, -0.1134752,  0.9432624}}};
 
-// #define HSCK 14
-// #define HMISO 36
-// #define HMOSI 13
-// #define IMU_CS 33
+    auto result = quat_from_R(mat);
 
-// #define VSCK 18
-// #define VMISO 19
-// #define VMOSI 23
-// #define MS5607_CS 2
-// #define BMP_CS 32
-// #define BMI_CS 16
+    printMatrix(result);
 
-// SPIClass vspi(VSPI);
-// SPIClass hspi(HSPI);
-
-// // Cesium::Sensor::Ms5607 altimeter2(MS5607_CS, &vspi);
-
-// // Cesium::Sensor::Bmi323 bmi(BMI_CS, &vspi);
-
-// Cesium::Sensor::Bmp388 altimeter1(BMP_CS, &hspi);
-
-
-// void setup() {
-
-//     pinMode(MS5607_CS, OUTPUT);
-//     pinMode(IMU_CS, OUTPUT);
-//     pinMode(BMI_CS, OUTPUT);
-//     pinMode(4, OUTPUT);
-//     pinMode(BMP_CS, OUTPUT);
-
-//     digitalWrite(MS5607_CS, HIGH);
-//     digitalWrite(IMU_CS, HIGH);
-//     digitalWrite(BMI_CS, HIGH);
-//     digitalWrite(4, HIGH);
-//     digitalWrite(BMP_CS, HIGH);
-    
-    
-//     Serial.begin(115200);
-
-//     vspi.begin(VSCK, VMISO, VMOSI);
-//     hspi.begin(HSCK, HMISO, HMOSI);
-
-//     altimeter1.setup();
-    
-//     // altimeter2.setup();
-
-    
-//     // // CAN.setPins(26, 25);
-//     // CAN.setPins(25, 26);
-    
-//     // if (!CAN.begin(500E3)) {
-//     //     Serial.println("Starting CAN failed!");
-//     //     while (1);
-//     // }
-
-//     // i = 0;
-
-    
-
-
-
-// }
-
-// void loop() {
-
-//     // altimeter2.read();
-//     // bmi.read();
-//     // altimeter1.read();
-//     // if (type == "sender") {
-//     //     Serial.print("Sending packet ... ");
-
-//     //     CAN.beginPacket(0x12);
-//     //     // CAN.write('h');
-//     //     // CAN.write('e');
-//     //     // CAN.write('l');
-//     //     // CAN.write('l');
-//     //     // CAN.write('o');
-//     //     CAN.write(i);
-//     //     CAN.endPacket();
-
-//     //     Serial.println("done");
-
-//     //     delay(100);
-//     //     i++;
-//     // }
-
-//     // else if (type == "receiver") {
-        
-//     //     // try to parse packet
-//     //     int packetSize = CAN.parsePacket();
-
-//     //     if (packetSize) {
-//     //         // received a packet
-//     //         Serial.print("Received ");
-
-//     //         if (CAN.packetExtended()) {
-//     //             Serial.print("extended ");
-//     //         }
-
-//     //         if (CAN.packetRtr()) {
-//     //             // Remote transmission request, packet contains no data
-//     //             Serial.print("RTR ");
-//     //         }
-
-//     //         Serial.print("packet with id 0x");
-//     //         Serial.print(CAN.packetId(), HEX);
-
-//     //         if (CAN.packetRtr()) {
-//     //             Serial.print(" and requested length ");
-//     //             Serial.println(CAN.packetDlc());
-//     //         } 
-//     //         else {
-//     //             Serial.print(" and length ");
-//     //             Serial.println(packetSize);
-
-//     //             // only print packet data for non-RTR packets
-//     //             while (CAN.available()) {
-//     //                 Serial.print((int)CAN.read());
-//     //             }
-//     //             Serial.println();
-//     //         }
-
-//     //         Serial.println();
-//     //     }
-//     // }
-
-
-    
-
-// }
-
-
+    while(1) {}
+    while (!Serial); // Wait for Serial monitor
+    hspi.begin(HSCK, HMISO, HMOSI);
+    // Begin SPI communication with GPS
+    if (!myGNSS.begin(hspi, CS, 10000000)) {
+        Serial.println("Failed to initialize GPS over SPI.");
+        while (1); // Halt if GPS fails
+    }
+    Serial.println("GPS initialized successfully over SPI!");
+    // Set the GPS to output only UBX (faster than NMEA)
+    myGNSS.setI2COutput(COM_TYPE_UBX);
+    // Increase navigation frequency to 10 Hz (100 ms updates)
+    myGNSS.setNavigationFrequency(10);
+    // Optional: Configure dynamic model (e.g., for automotive use)
+    // myGNSS.setDynamicModel(DYN_MODEL_AUTOMOTIVE);
+    // Optional: Enable high precision mode
+    // myGNSS.setHighPrecisionMode(true);
+}
+void loop() {
+    // Check if new position data is available
+    auto prev_time = micros();
+    if (myGNSS.getPVT()) {
+        Serial.print("Fix: ");
+        Serial.print(myGNSS.getFixType());
+        Serial.print(" | Lat: ");
+        Serial.print(myGNSS.getLatitude() / 1e7, 6);
+        Serial.print(" | Lon: ");
+        Serial.print(myGNSS.getLongitude() / 1e7, 6);
+        Serial.print(" | SIV: ");
+        Serial.print(myGNSS.getSIV());
+        Serial.print(" | Alt: ");
+        Serial.print(myGNSS.getAltitudeMSL() / 1000.0, 2);
+        Serial.println(" m");
+    }
+    Serial.println(micros() - prev_time);
+    delay(100); // Poll every 100ms for new data (10Hz)
+}

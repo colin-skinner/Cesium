@@ -16,14 +16,16 @@
 namespace Cesium {
 namespace Sensor {
 
+#define AK09916_I2C_ADDR 0x0C
+
 class Icm20948 : public AccelerometerBase, public GyroscopeBase, public MagnetometerBase {
 private:
     Adafruit_ICM20948 device;
 
     // TODO: add calibration stuff
-    Vector3<float> accel_factor[3];
-    Vector3<float> gyro_factor[3];
-    Vector3<float> mag_factor[3];
+    Vector3<float> accel_bias[3];
+    Vector3<float> gyro_bias[3];
+    Vector3<float> mag_bias[3];
 
     uint8_t cs_pin;
 

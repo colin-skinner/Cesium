@@ -9,17 +9,13 @@ const char imu_1_config[] = R"(
 {
     "acceleration_bias": [0.01, -0.02, 0.03],
     "gyroscope_bias": [0.001, -0.002, 0.003],
+    "magnetometer_bias": [0.001, -0.002, 0.003],
     "body_to_sensor": [
         [1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
         [0.0, 0, 1.0]
         ],
-    "cool_vector": [
-        [1],
-        [2],
-        [3]
-    ],
-    "name": "luke"
+    "name": "IMU1"
 }
 )";
 

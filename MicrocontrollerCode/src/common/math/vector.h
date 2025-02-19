@@ -11,14 +11,14 @@ template <typename T>
 using Vector3 = Vector<T, 3>;  
 
 
-// Function to dot product a vector
+// Function to dot product a vector TODO: fix this this is so damn wrong
 template <typename T, size_t rows>
-Vector<T, rows> dot(const Vector<T, rows>& vec1, const Vector<T, rows>& vec2) {
-    Vector<T, rows> result;
+T dot(const Vector<T, rows>& vec1, const Vector<T, rows>& vec2) {
+    T sum = 0;
     for (size_t i = 0; i < rows; i++) {
-        result[i][0] = vec1[i][0] * vec2[i][0];
+        sum += vec1[i][0] * vec2[i][0];
     }
-    return result;
+    return sum;
 }
 
 // Function to cross product a vector
@@ -34,10 +34,25 @@ Vector3<T> cross(const Vector3<T>& vec1, const Vector3<T>& vec2) {
 }
 
 // Norm (TODO: test)
-template <typename T>
-T norm(const Vector3<T>& vec) {
-    Vector3<T> rslt = dot(vec, vec);
-    return sqrt(rslt[0][0] + rslt[0][1] + rslt[0][2]); 
+template <typename T, size_t N>
+T norm(const Vector<T, N>& vec) {
+    T dot_product = dot(vec, vec);
+
+    return sqrt(dot_product); 
+}
+
+// TODO: unit
+// Function to unit-ize a vector
+template <typename T, size_t N>
+Vector<T, N> unit(const Vector<T, N>& vec1) {
+    T length = norm(vec1);
+    Vector<T, N> result = vec1;
+    
+    for (auto& row : result) {
+        row[0] /= length;
+    }
+
+    return result;
 }
 
 // Copying this to a vector of bytes. Returns number of bytes advanced. TODO: test

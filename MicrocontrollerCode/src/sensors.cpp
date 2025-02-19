@@ -29,10 +29,6 @@ using namespace std;
 #define BMP_CS 32
 #define BMI_CS 16
 
-SerialComms comms;
-
-
-
 // SPIClass* vspi = new SPIClass(VSPI);
 // SPIClass* hspi = new SPIClass(HSPI);
 SPIClass hspi(HSPI);

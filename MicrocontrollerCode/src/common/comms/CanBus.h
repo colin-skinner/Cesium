@@ -12,13 +12,15 @@ namespace Cesium {
 
 class CanBus : public ESP32SJA1000Class {
 private:
-    uint16_t timeout;
+    uint16_t _timeout;
 public:
 
-    CanBus() : timeout{0} { setPins(26, 25); };
-    CanBus(uint8_t rx, uint8_t tx);
+    CanBus() : _timeout{0} { setPins(25, 26); };
+    CanBus(uint8_t rx, uint8_t tx, uint16_t timeout = 0);
 
-    inline void set_timeout(uint16_t timeout_ms) {timeout = timeout_ms;}
+    bool setup(long baud_rate = 500E3);
+
+    inline void set_timeout(uint16_t timeout_ms) {_timeout = timeout_ms;}
 
     // Wrapper around transmission. True if transmit within 
     bool transmit(int id, const uint8_t* buffer, size_t len);

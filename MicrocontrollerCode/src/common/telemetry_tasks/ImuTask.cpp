@@ -67,7 +67,7 @@ bool ImuTask::create_telem_packet(vector<uint8_t> data)
     uint8_t accel_id = data[0];
     uint8_t gyro_id = data[1];
     uint8_t mag_id = data[2];
-    Frame frame = (Frame)data[3];
+    CoordFrame frame = (CoordFrame)data[3];
     
     RETURN_FALSE_IF_FALSE(check_ranges(data));
     // TODO: Frame bounds checking
@@ -79,16 +79,16 @@ bool ImuTask::create_telem_packet(vector<uint8_t> data)
 
     // Get data here, but for now, make fake vector
     // TODO: Implement real data
-    if (frame == Frame::Sensor) {
+    if (frame == CoordFrame::Sensor) {
         accels[accel_id]->read();
         accel_data = accels[accel_id]->get_accel_mps2();
-        gyro_data = gyros[gyro_id]->get_w_dps();
+        gyro_data = gyros[gyro_id]->get_w_rps();
         mag_data = mags[mag_id]->get_B_uT();
         temp_data = accels[accel_id]->get_temp_C();
     }
     // else if (frame == Frame::Sensor) {
     //     accel_data = accels[accel_id]->get_accel_mps2();
-    //     gyro_data = gyros[gyro_id]->get_w_dps();
+    //     gyro_data = gyros[gyro_id]->get_w_rps();
     //     mag_data = mags[mag_id]->get_B_uT();
     // }
 

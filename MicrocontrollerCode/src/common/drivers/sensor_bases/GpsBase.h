@@ -18,13 +18,13 @@ protected:
 
     uint8_t satellites_in_view;
 
-    float course_deg;
-    float horizontal_speed_mps;
+    uint32_t heading_scaled;
+    uint32_t ground_speed_mmps;
 
 public:
 
     GpsBase();
-    virtual ~GpsBase() = 0;
+    virtual ~GpsBase();
 
     virtual bool read(); 
 };

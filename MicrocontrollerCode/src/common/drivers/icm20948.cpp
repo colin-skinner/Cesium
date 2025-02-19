@@ -1,13 +1,14 @@
 #include "Icm20948.h"
 #include "../globals.h"
-#include <fstream>
+#include "../../config/ConfigReader.h"
+#include <ArduinoJson.h>
 
 namespace Cesium {
 namespace Sensor {
 Icm20948::Icm20948()
-    : accel_factor{}
-    , gyro_factor{}
-    , mag_factor{}
+    : accel_bias{}
+    , gyro_bias{}
+    , mag_bias{}
     , cs_pin{0}
 {
     temp_C = 0;
@@ -23,6 +24,15 @@ Icm20948::Icm20948(uint8_t cs_pin, SPIClass* spi_instance)
 
 bool Icm20948::configure(const char* config_name)
 {
+    JsonDocument config;
+    File::json_open(config_name, config);
+
+    RETURN_FALSE_IF_FALSE(File::json_extract(config, "body_to_sensor", body_to_sensor));
+
+    RETURN_FALSE_IF_FALSE(File::json_extract(config, "acceleration_bias", accel_bias));
+    RETURN_FALSE_IF_FALSE(File::json_extract(config, "gyroscope_bias", gyro_bias));
+    RETURN_FALSE_IF_FALSE(File::json_extract(config, "magnetometer_bias", mag_bias));
+    
     return false;
 }
 
@@ -97,8 +107,26 @@ bool Icm20948::setup()
     DEBUGLN(gyro_divisor);
     DEBUG("Gyro data rate (Hz) is approximately: ");
     DEBUGLN(gyro_rate);
+
+    // Setup magnetometer
+    // device.writeExternalRegister(ICM20X_B3_I2C_SLV0_ADDR, )
+    // Serial.println(device.enableI2CMaster(true));
+    // Serial.println(device.readExternalRegister(AK09916_I2C_ADDR, AK09916_WIA2));
     
-    return false;
+    // Serial.println("Writing: " + String(device.writeExternalRegister(AK09916_I2C_ADDR, AK09916_CNTL2, 0x00))); // power down
+    // delay(100);
+
+    // Serial.println("Writing: " + String(device.writeExternalRegister(AK09916_I2C_ADDR, AK09916_ST2, 0x01))); // power down
+    // delay(100);
+
+
+
+
+
+    // Serial.println("Writing: " + String(device.writeExternalRegister(AK09916_I2C_ADDR, AK09916_CNTL2, 0x04))); // Start conversion
+    // Serial.println("Reading: " + String(device.readExternalRegister(AK09916_I2C_ADDR, AK09916_CNTL2))); // Start conversion
+    
+    return true;
 }
 
 bool Icm20948::read()
@@ -106,11 +134,40 @@ bool Icm20948::read()
     SensorBase::read();
 
     /* Get a new normalized sensor event */
-    device.getEvent(&accel_event, &gyro_event, &temp_event, &mag_event);
+    device.getAccelerometerSensor()->getEvent(&accel_event);
+    device.getGyroSensor()->getEvent(&gyro_event);
+    device.getTemperatureSensor()->getEvent(&temp_event);
+    // device.getMagnetometerSensor()->getEvent(&mag_event);
+
+    // uint8_t status1 = device.readExternalRegister(AK09916_I2C_ADDR, 0x10); // Status 1
+    // uint8_t status2 = device.readExternalRegister(AK09916_I2C_ADDR, 0x18); // Status 2
+    // uint8_t ctrl2 = device.readExternalRegister(AK09916_I2C_ADDR, AK09916_CNTL2); // Status 2
+
+    // Serial.print("Magnetometer Status 1: 0x");
+    // Serial.println(status1, HEX);
+    // Serial.print("Magnetometer Status 2: 0x");
+    // Serial.println(status2, HEX);
+    // Serial.print("Magnetometer Control 2: 0x");
+    // Serial.println(ctrl2, HEX);
+    // Serial.print(status1, HEX);
+    // uint8_t buffer[6];
+
+    // // Read 6 bytes of magnetometer data
+    // for (int i = 0; i < 6; i++) {
+    //     buffer[i] = device.readExternalRegister(AK09916_I2C_ADDR, AK09916_HXL + i);
+    // }
+    // for (int i = 0; i < 6; i++) {
+    //     Serial.print(" " + String(buffer[i]));
+    // }
+    // Serial.println();
+    
+
+
+    // device.getEvent(&accel_event, &gyro_event, &temp_event, &mag_event);
 
     // If this doesn't work, just put "12" for the size
     memcpy(  &accel_mps2,  &accel_event.acceleration, sizeof(accel_mps2)); // Copies as g's
-    memcpy(  &w_dps,  &gyro_event.gyro, sizeof(w_dps)); // Copies as deg/s
+    memcpy(  &w_rps,  &gyro_event.gyro, sizeof(w_rps)); // Copies as deg/s
     memcpy(  &temp_C,  &temp_event.temperature, sizeof(temp_C)); // Copies as degC
     memcpy(  &B_uT,  &mag_event.magnetic, sizeof(B_uT)); // Copies as uT
     
@@ -128,11 +185,11 @@ bool Icm20948::read()
     DEBUG(" g, ");
 
     DEBUG("\t\tGyro X: ");
-    DEBUG(w_dps[0][0]);
+    DEBUG(w_rps[0][0]);
     DEBUG(", Y: ");
-    DEBUG(w_dps[1][0]);
+    DEBUG(w_rps[1][0]);
     DEBUG(", Z: ");
-    DEBUG(w_dps[2][0]);
+    DEBUG(w_rps[2][0]);
     DEBUGLN(" deg/s, ");
 
     DEBUG("\t\tMag X: ");
@@ -142,6 +199,10 @@ bool Icm20948::read()
     DEBUG(", Z: ");
     DEBUG(B_uT[2][0]);
     DEBUGLN(" uT");
+
+    // Serial.print(mag_event.magnetic.x);
+    // Serial.print(","); Serial.print(mag_event.magnetic.y);
+    // Serial.print(","); Serial.print(mag_event.magnetic.z);
     return false;
 }
 

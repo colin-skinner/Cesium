@@ -29,33 +29,33 @@ bool json_open(const char* config_name, JsonDocument& doc) {
 template <typename T>
 bool json_extract(JsonDocument doc, const char* name, T& value) {
 
-    RETURN_FALSE_IF_FALSE(doc[name].is<T>()); 
+    // RETURN_FALSE_IF_FALSE(doc[name].is<T>()); 
 
-    value = doc[name].as<T>();
+    // value = doc[name].as<T>();
     return true;
 }
 
 template <typename T, int rows, int cols>
 bool json_extract(JsonDocument doc, const char* name, Matrix<T, rows, cols>& value) {
-    JsonObject json_obj = doc.as<JsonObject>();
+    // JsonObject json_obj = doc.as<JsonObject>();
 
-    JsonArray matrix = json_obj[name].as<JsonArray>();
+    // JsonArray matrix = json_obj[name].as<JsonArray>();
 
-    // Return if number of rows doesn't match
-    Serial.println(matrix.size());
-    RETURN_FALSE_IF_FALSE(matrix.size() == rows);
-    for (size_t i = 0; i < rows; i++) {
+    // // Return if number of rows doesn't match
+    // Serial.println(matrix.size());
+    // RETURN_FALSE_IF_FALSE(matrix.size() == rows);
+    // for (size_t i = 0; i < rows; i++) {
         
-        // Return if not an array, or number of cols doesn't match
-        RETURN_FALSE_IF_FALSE(matrix[i].is<JsonArray>());
-        Serial.print(matrix[i].size());
-        RETURN_FALSE_IF_FALSE(matrix[i].size() == cols);
-        for (size_t j = 0; j < cols; j++) {
-            // Return if not datatype
-            RETURN_FALSE_IF_FALSE(matrix[i][j].is<T>());
-            value[i][j] = matrix[i][j].as<T>();
-        }
-    }
+    //     // Return if not an array, or number of cols doesn't match
+    //     RETURN_FALSE_IF_FALSE(matrix[i].is<JsonArray>());
+    //     Serial.print(matrix[i].size());
+    //     RETURN_FALSE_IF_FALSE(matrix[i].size() == cols);
+    //     for (size_t j = 0; j < cols; j++) {
+    //         // Return if not datatype
+    //         RETURN_FALSE_IF_FALSE(matrix[i][j].is<T>());
+    //         value[i][j] = matrix[i][j].as<T>();
+    //     }
+    // }
 
     return true;
 }

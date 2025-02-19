@@ -29,7 +29,7 @@ void test_accel_base_constructor() {
     TEST_ASSERT_EQUAL(Interfaces::NOT_SET, sensor.get_interface());
     TEST_ASSERT_EQUAL_FLOAT(NAN, sensor.get_temp_C());
     
-    Matrix3<float> test_matrix{};
+    Quaternion<float> test_matrix{};
     TEST_ASSERT_TRUE(test_matrix == sensor.get_body_to_sensor());
 
     Vector3<float> zero_vector = {{{0}, {0}, {0}}};

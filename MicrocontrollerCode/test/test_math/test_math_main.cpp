@@ -13,6 +13,7 @@ void setup(){
     test_all_bitmath();
     test_all_matrix();
     test_all_vector();
+    test_all_quat();
     UNITY_END();
 }
 void loop(){}

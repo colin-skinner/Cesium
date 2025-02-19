@@ -11,9 +11,11 @@ GpsBase::GpsBase()
     , longitude_deg{}
     , altitude_m{}
     , satellites_in_view{}
-    , course_deg{}
-    , horizontal_speed_mps{}
+    , heading_scaled{}
+    , ground_speed_mmps{}
 {}
+
+GpsBase::~GpsBase() {}
 
 bool GpsBase::read()
 {

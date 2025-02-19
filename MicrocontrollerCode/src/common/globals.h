@@ -15,7 +15,7 @@
 #define DEBUGLN(val)
 #endif
 
-enum class Frame {
+enum class CoordFrame {
     Sensor,
     Body,
     Launch,

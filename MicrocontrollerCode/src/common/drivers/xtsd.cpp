@@ -4,8 +4,8 @@ namespace Cesium {
 
 
 XTSD::XTSD(uint8_t cs_pin, SPIClass *spi_instance) 
-    : cs_pin{32}
-    , _spi{&SPI}
+    : cs_pin{cs_pin}
+    , _spi{spi_instance}
     , last_log_us{0}
     , last_log_duration_ms{0}
     , log_success{true}
@@ -44,7 +44,7 @@ bool XTSD::log(const char* message)
         
         dataFile.println(message);
 
-        dataFile.close();
+        // dataFile.close();
         
         DEBUGLN("done.");
         log_success = true;

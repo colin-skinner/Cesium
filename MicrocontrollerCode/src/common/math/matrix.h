@@ -33,7 +33,7 @@ bool matrix_float_equals(const Matrix<float, row, col>& mat1, const Matrix<float
 
     for (size_t i = 0; i < row; i++) {
         for (size_t j = 0; j < col; j++) {
-            if (abs(mat1[i][j] - mat2[i][j]) > 1e-12) {
+            if (abs(mat1[i][j] - mat2[i][j]) > 1e-6) {
                 return false;
             }
         }
@@ -103,7 +103,7 @@ template <typename T, size_t row, size_t col>
 void printMatrix(const Matrix<T, row, col>& matrix) {
     for (const auto& r : matrix) {
         for (const auto& val : r) {
-            DEBUG(val);
+            DEBUG(String(val, 5));
             DEBUG(" ");
         }
         DEBUGLN();

@@ -87,7 +87,7 @@ bool Bmi323::setup()
 bool Bmi323::read()
 {
     readAccelerometer((float*) &accel_mps2);
-    readGyroscope((float*) &w_dps);
+    readGyroscope((float*) &w_rps);
 
     DEBUG(accel_mps2[0][0]);
     DEBUG("\t");
@@ -96,11 +96,11 @@ bool Bmi323::read()
     DEBUG(accel_mps2[0][2]);
     DEBUG("\t");
 
-    DEBUG(w_dps[0][0]);
+    DEBUG(w_rps[0][0]);
     DEBUG("\t");
-    DEBUG(w_dps[0][1]);
+    DEBUG(w_rps[0][1]);
     DEBUG("\t");
-    DEBUGLN(w_dps[0][2]);
+    DEBUGLN(w_rps[0][2]);
 
     return true;
 }
@@ -233,6 +233,15 @@ float Bmi323::lsb_to_dps(int16_t val, float dps, uint8_t bit_width)
     float half_scale = (float)((pow((double)power, (double)bit_width) / 2.0f));
 
     return (dps / (half_scale)) * (val);
+}
+
+/*!
+ * @brief This function converts lsb to degree per second for 16 bit gyro at
+ * range 125, 250, 500, 1000 or 2000dps.
+ */
+float Bmi323::lsb_to_rps(int16_t val, float dps, uint8_t bit_width)
+{
+    return lsb_to_dps(val, dps, bit_width) * DEG2RAD;
 }
 
 

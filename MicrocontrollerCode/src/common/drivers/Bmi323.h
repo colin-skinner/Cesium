@@ -66,6 +66,7 @@ public:
 
     float lsb_to_mps2(int16_t val, int8_t g_range, uint8_t bit_width);
     float lsb_to_dps(int16_t val, float dps, uint8_t bit_width);
+    float lsb_to_rps(int16_t val, float dps, uint8_t bit_width);
 
 };
 

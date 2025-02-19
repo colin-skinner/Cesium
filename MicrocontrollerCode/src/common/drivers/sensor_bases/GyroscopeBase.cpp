@@ -5,8 +5,8 @@ namespace Sensor {
 
 
 GyroscopeBase::GyroscopeBase()
-    : w_dps{}
-    , w_body_dps{}
+    : w_rps{}
+    , w_body_rps{}
 {}
 
 GyroscopeBase::~GyroscopeBase() {}

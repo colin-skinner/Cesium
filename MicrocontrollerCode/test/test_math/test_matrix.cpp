@@ -71,7 +71,7 @@ void test_matrix_float_equality_edge_cases() {
         {3.0,4.0}
     }};
 
-    mat2[0][0] += 1e-7;
+    mat2[0][0] += 1e-5;
 
     TEST_ASSERT_FALSE(matrix_float_equals(mat1, mat2));
 }
