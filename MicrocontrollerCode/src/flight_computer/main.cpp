@@ -78,16 +78,28 @@ void loop() {
     // }
     // delay(10);
 
-    altimeter2.read();
-    imu1.read();
-    imu2.read();
+    altimeter1.read();
+    // altimeter2.read();
+    // imu1.read();
+    // imu2.read();
 
-    auto icm_result = quat_apply(ICM2Body, imu2.get_accel_mps2());
-    auto bmi_result = quat_apply(BMI2Body, imu1.get_accel_mps2());
 
-    Serial.println(altimeter2.get_altitude_m());
-    Serial.println(imu1.get_accel_mps2()[0][0]);
-    Serial.println(imu2.get_accel_mps2()[0][0]);
+    // GNC studf
+
+    /**
+     * sensor filters
+     * body rate integration
+     * kalman filter
+     */
+
+    // 
+
+    // auto icm_result = quat_apply(ICM2Body, imu2.get_accel_mps2());
+    // auto bmi_result = quat_apply(BMI2Body, imu1.get_accel_mps2());
+
+    // Serial.println(altimeter2.get_altitude_m());
+    // Serial.println(imu1.get_accel_mps2()[0][0]);
+    // Serial.println(imu2.get_accel_mps2()[0][0]);
     // auto result = quat_apply(quat_from_axis_rot<float>(90, {{1,0,0}}), imu2.get_accel_mps2());
     // Serial.print(String(icm_result[0][0],4) + " " + String(icm_result[0][1],4) + " " + String(icm_result[0][2],4) + ",");
     // Serial.println(String(bmi_result[0][0],4) + "," + String(bmi_result[0][1],4) + "," + String(bmi_result[0][2],4));

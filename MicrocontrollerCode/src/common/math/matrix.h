@@ -65,13 +65,22 @@ Matrix<T, row_f, col_f> operator*(const Matrix<T, row_f, dim_int>& mat1, const M
             result[i][j] = 0;
             for (size_t k = 0; k < dim_int; k++) {
                 result[i][j] += mat1[i][k] * mat2[k][j];
-                // Serial.print(mat1[i][k] * mat2[k][j]);
-                // Serial.print("....");
-                // Serial.println();
             }
         }
     }
     return result;
+}
+
+// Overload operator* for matrix multiplication
+template <typename T, size_t row, size_t col>
+Matrix<T, row, col> operator*(const Matrix<T, row, col>& mat, T factor) {
+    Matrix<T, row, col> result{};
+    for (size_t i = 0; i < row; i++) {
+        for (size_t j = 0; j < col; j++) {
+            result[i][j] = mat[i][j] * factor;
+        }
+    }
+    return mat;
 }
 
 // Overload the + operator for Matrix addition

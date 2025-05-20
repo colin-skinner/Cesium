@@ -29,6 +29,7 @@ public:
     UBloxGps(uint8_t cs_pin, SPIClass* spi_instance);
     UBloxGps(TwoWire* i2c_instance, uint8_t address = 0x42);
     UBloxGps(HardwareSerial* serial_instance); // Assumes correct baud rate is already specfied
+    bool configure(const char* config_name);
     bool setup();
     bool read();
 

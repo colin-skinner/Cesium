@@ -63,6 +63,12 @@
         "bitset": "cpp",
         "codecvt": "cpp",
         "complex": "cpp",
-        "forward_list": "cpp"
+        "forward_list": "cpp",
+        "regex": "cpp",
+        "valarray": "cpp",
+        "stdio.h": "c",
+        "bosch_bmi323.h": "c",
+        "bmi323_defs.h": "c",
+        "common.h": "c"
     }
 }

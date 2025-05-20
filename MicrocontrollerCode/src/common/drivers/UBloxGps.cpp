@@ -24,6 +24,11 @@ UBloxGps::UBloxGps(HardwareSerial* serial_instance)
     this->interface = Interfaces::Serial;
 }
 
+bool UBloxGps::configure(const char *config_name)
+{
+    return false;
+}
+
 bool UBloxGps::setup()
 {
 

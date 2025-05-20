@@ -30,7 +30,7 @@ namespace Cesium {
 
     // HSPI
     const uint8_t HSCK = 14;
-    const uint8_t HMISO = 36;
+    const uint8_t HMISO = 34;
     const uint8_t HMOSI = 13;
 
     // I2C
@@ -66,7 +66,7 @@ namespace Cesium {
     const uint8_t IMU2_CS = 33;
 
     // SD/Flash
-    const uint8_t SD_CS = 32;
+    // const uint8_t SD_CS = 32;
 
     const uint8_t LED = 2;
 
@@ -92,6 +92,7 @@ namespace Cesium {
 
     // Objects
     extern FileSystem filesystem;
+    extern Sensor::Bmp388 altimeter1;
     extern Sensor::Ms5607 altimeter2;
     extern Sensor::Icm20948 imu2;
     extern Sensor::Bmi323 imu1;

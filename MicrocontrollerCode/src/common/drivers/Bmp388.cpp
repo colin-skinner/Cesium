@@ -60,7 +60,18 @@ bool Bmp388::read()
         temp_C = device.temperature;
         pressure_kPa = device.pressure / 1000.0;
         altitude_m = device.readAltitude(_sea_level_pressure_hPa);
+        
+        // DEBUG("Altimeter 2 (MS5607): ");
+        DEBUG(temp_C);
+        DEBUG(", ");
+        // DEBUG(" *C, ");
+        DEBUG(pressure_kPa);
+        DEBUG(",");
+        // DEBUG(" Pa, ");
+        DEBUGLN(altitude_m);
     }
+    
+
     return true;
 }
 

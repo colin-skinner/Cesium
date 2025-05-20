@@ -106,8 +106,11 @@ bool Adafruit_BMP3XX::begin_I2C(uint8_t addr, TwoWire *theWire) {
  */
 bool Adafruit_BMP3XX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
                                 uint32_t frequency) {
+  Serial.println("begin_SPI");
+
   if (i2c_dev)
     delete i2c_dev;
+  
   if (spi_dev)
     delete spi_dev;
   i2c_dev = NULL;
@@ -118,10 +121,12 @@ bool Adafruit_BMP3XX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
                              SPI_BITORDER_MSBFIRST,  // bit order
                              SPI_MODE0,              // data mode
                              theSPI);
+                            
 
   if (!spi_dev->begin()) {
     return false;
   }
+    
 
   the_sensor.chip_id = cs_pin;
   the_sensor.intf = BMP3_SPI_INTF;
@@ -129,6 +134,8 @@ bool Adafruit_BMP3XX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI,
   the_sensor.write = &spi_write;
   the_sensor.intf_ptr = g_spi_dev;
   the_sensor.dummy_byte = 1;
+
+  
 
   return _init();
 }
@@ -176,8 +183,10 @@ bool Adafruit_BMP3XX::_init(void) {
   the_sensor.delay_us = delay_usec;
   int8_t rslt = BMP3_OK;
 
+  
+
   /* Reset the sensor */
-  rslt = bmp3_soft_reset(&the_sensor);
+  rslt = bmp3_soft_reset(&the_sensor); return false;
 #ifdef BMP3XX_DEBUG
   Serial.print("Reset result: ");
   Serial.println(rslt);

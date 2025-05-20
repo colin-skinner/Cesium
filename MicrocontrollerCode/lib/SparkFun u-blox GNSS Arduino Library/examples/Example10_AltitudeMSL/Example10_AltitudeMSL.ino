@@ -34,6 +34,7 @@
 SFE_UBLOX_GNSS myGNSS;
 
 long lastTime = 0; //Tracks the passing of 2000ms (2 seconds)
+uint32_t read_time = 0;
 
 void setup()
 {
@@ -58,8 +59,10 @@ void loop()
   {
     lastTime = millis(); //Update the timer
     
+    read_time = micros();
     long latitude = myGNSS.getLatitude();
-    Serial.print(F("Lat: "));
+    Serial.print(micros() - read_time);
+    Serial.print(F(" Lat: "));
     Serial.print(latitude);
 
     long longitude = myGNSS.getLongitude();
